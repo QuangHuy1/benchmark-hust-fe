@@ -1,0 +1,132 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+:where(img, video) {
+  max-width: 100%;
+  height: auto;
+}
+
+._img_bg_ {
+  height: 100vh;
+  overflow: hidden;
+}
+
+._img_bg_1_ {
+  width: 100vw;
+}
+
+._display_ {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+._text_title_ {
+  color: darkred;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 43px;
+  margin: 20px;
+  text-align: center;
+}
+
+._text_title_1_ {
+  color: #8b3850;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 43px;
+  margin: 20px;
+  text-align: center;
+}
+
+._view_disable_ {
+  cursor: pointer;
+  color: #ababab;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+._view_disable_:hover {
+  color: #282828;
+  background: #F5F5F5;
+}
+
+._view_enable_ {
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 600;
+  color: #282828;
+  background: #F5F5F5;
+}
+
+._search_button_ {
+  width: 100%;
+}
+
+:where(.css-dev-only-do-not-override-17sses9).ant-input-search .ant-input:hover, :where(.css-dev-only-do-not-override-17sses9).ant-input-search .ant-input:focus {
+  border-color: darkred !important;
+}
+
+:where(.css-dev-only-do-not-override-17sses9).ant-btn-primary {
+  background: darkred;
+}
+
+:where(.css-dev-only-do-not-override-17sses9).ant-btn-primary:hover, :where(.css-dev-only-do-not-override-17sses9).ant-btn-primary:focus {
+  background: #ff6d78 !important;
+}
+
+:where(.css-dev-only-do-not-override-17sses9).ant-slider .ant-slider-track:hover, :where(.css-dev-only-do-not-override-17sses9).ant-slider .ant-slider-track:focus {
+  background: darkred;
+}
+
+:where(.css-dev-only-do-not-override-17sses9).ant-slider .ant-slider-track {
+  background: darkred !important;
+}
+
+:where(.css-dev-only-do-not-override-17sses9).ant-slider .ant-slider-handle:hover::after, :where(.css-dev-only-do-not-override-17sses9).ant-slider .ant-slider-handle:active::after, :where(.css-dev-only-do-not-override-17sses9).ant-slider .ant-slider-handle:focus::after {
+  box-shadow: 0 0 0 4px darkred !important;
+}
+
+:where(.css-dev-only-do-not-override-17sses9).ant-slider .ant-slider-handle::after {
+  box-shadow: 0 0 0 2px darkred !important;
+}
+
+:where(.css-dev-only-do-not-override-17sses9).ant-input:hover, :where(.css-dev-only-do-not-override-17sses9).ant-input:focus {
+  border-color: darkred;
+}
+
+._table_school_ {
+  width: 100%;
+}
+
+._btn_choose_major_ {
+  cursor: pointer;
+}
+
+._btn_choose_major_:hover {
+  background: #ff6d78;
+}
+
+._input_mark_ {
+  width: fit-content;
+}
+
+._range_mark_ {
+  width: 100%;
+  margin-left: 10px;
+  margin-right: 10px;
+  color: darkred !important;
+}
+
