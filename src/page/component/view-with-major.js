@@ -1,6 +1,15 @@
 import {Flex} from "@chakra-ui/react";
+import {useEffect, useState} from "react";
+import {serviceHust} from "../../utils/service";
 
 const ViewWithMajor = () => {
+    const [falculties, setFaculties] = useState([]);
+
+    useEffect(() => {
+        serviceHust.findAllFaculty().then(res => {
+
+        })
+    }, []);
 
     const column = [
         "Điện tử",

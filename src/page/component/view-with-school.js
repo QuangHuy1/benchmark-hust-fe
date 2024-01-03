@@ -1,10 +1,12 @@
 import {Flex} from "@chakra-ui/react";
 import {Input, Table} from 'antd';
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {serviceHust} from "../../utils/service";
 
 const { Search } = Input;
 const ViewWithSchool = () => {
     const [loading, setLoading] = useState(false);
+    const [data, setData] = useState([]);
 
     const onSearchSchool = (value) => {
         setLoading(false);
@@ -29,14 +31,17 @@ const ViewWithSchool = () => {
             key: 'code',
         },
     ]
-    
-    const data = [
-        {
-            index: '1',
-            name: "Trường Điện - Điện tử",
-            code: 'ET',
-        }
-    ]
+
+    useEffect(() => {
+        serviceHust.findAllSchool().then(res => {
+            const formattedData = res.map((entity, index) => ({
+                index: index,
+                name: entity?.vnName,
+                code: entity?.abbreviations,
+            }));
+            setData(formattedData)
+        })
+    }, []);
 
     return (
         <Flex w={"100%"} flexDir={"column"} justifyContent={"center"} alignItems={"center"}>
