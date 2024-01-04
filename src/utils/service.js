@@ -3,7 +3,6 @@ import API from "./method";
 let url = process.env.REACT_APP_HUST_API;
 let serviceHust = {
     findAllSchool: () => {
-        console.log(url)
         return API.request({
             url: "/school",
             method: "GET",
@@ -15,6 +14,28 @@ let serviceHust = {
             url: "/faculty",
             method: "GET",
             baseURL: url,
+        });
+    },
+    findAllFacultyBySchoolId: (id) => {
+        return API.request({
+            url: "/school/" + id,
+            method: "GET",
+            baseURL: url,
+        });
+    },
+    findAllGroup: () => {
+        return API.request({
+            url: "/group",
+            method: "GET",
+            baseURL: url,
+        });
+    },
+    searchBenchmark: (params) => {
+        return API.request({
+            url: "/benchmark",
+            method: "GET",
+            baseURL: url,
+            params: params
         });
     },
     login: (params) => {

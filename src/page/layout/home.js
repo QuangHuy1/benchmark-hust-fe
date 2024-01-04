@@ -7,19 +7,39 @@ import ViewWithMajor from "../component/view-with-major";
 import ViewWithScore from "../component/view-with-score";
 import {useRecoilState} from "recoil";
 import {typeState, typeTestState} from "../recoil";
+import {useNavigate} from "react-router-dom";
 
 const Home = () => {
+    const navigate = useNavigate();
     const [type, setType] = useRecoilState(typeState);
     const [typeTest, setTypeTest] = useRecoilState(typeTestState);
 
     useEffect(() => {
         if (window.location.pathname.startsWith("/danh-gia-tu-duy")) {
             setTypeTest(1);
+        } else if (window.location.pathname.startsWith("/school/")) {
+            setType(3);
+        } else if (window.location.pathname.startsWith("/school")) {
+            setType(0);
+        } else if (window.location.pathname.startsWith("/major/")) {
+            setType(4);
+        } else if (window.location.pathname.startsWith("/major")) {
+            setType(1);
+        } else if (window.location.pathname.startsWith("/score")) {
+            setType(2);
         }
-    }, []);
+    }, [window.location.pathname]);
 
     const changeType = (value) => {
-        setType(value);
+        if (value === 1) {
+            navigate("/major");
+        }
+        if (value === 0) {
+            navigate("/school")
+        }
+        if (value === 2) {
+            navigate("/score")
+        }
     }
 
     return (
@@ -57,22 +77,22 @@ const Home = () => {
                               alignItems={"center"}
                               justifyContent={"space-between"}>
                             <Flex w={"100%"}
-                                  p={5}
+                                  p={10}
                                   border={"1px solid #ababab"}
                                   alignItems={"center"}
                                   justifyContent={"center"}
                                   onClick={() => changeType(0)}
-                                  className={type === 0 ? "_view_enable_" : "_view_disable_"}>Xem theo trường</Flex>
+                                  className={type === 0 || type === 3 ? "_view_enable_" : "_view_disable_"}>Xem theo trường</Flex>
                             <Flex w={"100%"}
-                                  p={5}
+                                  p={10}
                                   borderTop={"1px solid #ababab"}
                                   borderBottom={"1px solid #ababab"}
                                   alignItems={"center"}
                                   justifyContent={"center"}
                                   onClick={() => changeType(1)}
-                                  className={type === 1 ? "_view_enable_" : "_view_disable_"}>Xem theo ngành</Flex>
+                                  className={type === 1 || type === 4 ? "_view_enable_" : "_view_disable_"}>Xem theo ngành</Flex>
                             <Flex w={"100%"}
-                                  p={5}
+                                  p={10}
                                   border={"1px solid #ababab"}
                                   alignItems={"center"}
                                   justifyContent={"center"}
@@ -82,6 +102,8 @@ const Home = () => {
                         {type === 0 && <ViewWithSchool/>}
                         {type === 1 && <ViewWithMajor/>}
                         {type === 2 && <ViewWithScore/>}
+                        {type === 3 && <ViewWithScore/>}
+                        {type === 4 && <ViewWithScore/>}
                     </Flex>
 
                 </Flex>

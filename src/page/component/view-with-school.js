@@ -2,9 +2,11 @@ import {Flex} from "@chakra-ui/react";
 import {Input, Table} from 'antd';
 import {useEffect, useState} from "react";
 import {serviceHust} from "../../utils/service";
+import {useNavigate} from "react-router-dom";
 
 const { Search } = Input;
 const ViewWithSchool = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
 
@@ -23,7 +25,7 @@ const ViewWithSchool = () => {
             title: 'Tên trường',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <a>{text}</a>,
+            render: (text) => <a onClick={() => navigate("/school/" + text.id)}>{text.value}</a>,
         },
         {
             title: 'Mã trường',
@@ -35,8 +37,11 @@ const ViewWithSchool = () => {
     useEffect(() => {
         serviceHust.findAllSchool().then(res => {
             const formattedData = res.map((entity, index) => ({
-                index: index,
-                name: entity?.vnName,
+                index: index + 1,
+                name: {
+                    value: entity?.vnName,
+                    id: entity?.id
+                },
                 code: entity?.abbreviations,
             }));
             setData(formattedData)

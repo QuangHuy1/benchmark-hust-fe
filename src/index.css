@@ -54,8 +54,8 @@ code {
 ._view_disable_ {
   cursor: pointer;
   color: #ababab;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 ._view_disable_:hover {
@@ -65,8 +65,8 @@ code {
 
 ._view_enable_ {
   cursor: pointer;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   color: #282828;
   background: #F5F5F5;
 }
@@ -128,5 +128,49 @@ code {
   margin-left: 10px;
   margin-right: 10px;
   color: darkred !important;
+}
+
+._menu_text_ {
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+._btn_login_ {
+  cursor: pointer;
+  width: 100%;
+  justify-content: end;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+._main_btn_login_ {
+  cursor: pointer;
+  color: #282828;
+}
+
+._main_btn_login_:hover {
+  border-radius: 10px;
+  padding: 5px;
+  border: 1px solid #282828;
+  color: darkred;
+}
+
+._menu_text_enable {
+  color: darkred;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+._menu_text_:hover, ._menu_text_:focus {
+  color: darkred;
 }
 

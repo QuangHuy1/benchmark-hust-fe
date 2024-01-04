@@ -1,33 +1,32 @@
 import {Flex} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {serviceHust} from "../../utils/service";
+import {useNavigate} from "react-router-dom";
 
 const ViewWithMajor = () => {
-    const [falculties, setFaculties] = useState([]);
+    const navigate = useNavigate();
+    const [faculties, setFaculties] = useState([]);
 
     useEffect(() => {
         serviceHust.findAllFaculty().then(res => {
-
+            const listOfLists = [];
+            const elementsPerSublist = 4;
+            for (let i = 0; i < res.length; i += elementsPerSublist) {
+                // Sử dụng slice để cắt list response thành các sublist mới
+                const sublist = res.slice(i, i + elementsPerSublist);
+                listOfLists.push(sublist);
+            }
+            setFaculties(listOfLists);
         })
     }, []);
 
-    const column = [
-        "Điện tử",
-        "Viễn thông",
-        "Công nghệ",
-        "Thông tin"
-    ]
-
-    const row = [
-        column
-    ]
-
     return (
         <Flex w={"100%"} flexDir={"column"}>
-            {row.map(r => (
-                <Flex w={"100%"} justifyContent={"space-between"} alignItems={"center"}>
+            {faculties.map(r => (
+                <Flex mb={20} w={"100%"} justifyContent={"space-between"} alignItems={"center"}>
                     {r.map(c => (
                         <Flex w={"22%"}
+                              h={100}
                               className={"_btn_choose_major_"}
                               borderRadius={5}
                               fontSize={16}
@@ -35,8 +34,10 @@ const ViewWithMajor = () => {
                               padding={10}
                               background={"#F5F5F5"}
                               justifyContent={"center"}
-                              alignItems={"center"}>
-                            {c}
+                              alignItems={"center"}
+                              onClick={() => navigate("/major/" + c.id)}
+                        >
+                            {c.name}
                         </Flex>
                     ))}
                 </Flex>

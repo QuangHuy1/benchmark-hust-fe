@@ -5,17 +5,29 @@ import {
 import {Input, Select, Slider, Table, Tag} from "antd";
 import {useEffect, useState} from "react";
 import {useRecoilValue} from "recoil";
-import {typeTestState} from "../recoil";
+import {typeState, typeTestState} from "../recoil";
 import {showToast} from "../../utils/helper";
+import {serviceHust} from "../../utils/service";
+import {useLocation} from "react-router-dom";
 
 const ViewWithScore = () => {
+    const location = useLocation();
+    const { pathname } = location;
+    const arrPath = pathname.split('/');
+    const currentRoute = arrPath[arrPath.length - 1];
     const [mark, setMark] = useState([0, 30]);
     const [max, setMax] = useState(30);
     const [group, setGroup] = useState("");
     const [year, setYear] = useState("2023");
     const [years, setYears] = useState();
     const [groups, setGroups] = useState([])
+    const [pageSize, setPageSize] = useState(10);
+    const [pageIndex, setPageIndex] = useState(1);
+    const [data, setData] = useState([]);
+    const [response, setResponse] = useState({});
+    const [facultyId, setFacultyId] = useState("");
     const typeTest =  useRecoilValue(typeTestState);
+    const type =  useRecoilValue(typeState);
 
     useEffect(() => {
         if (typeTest === 1) {
@@ -71,21 +83,60 @@ const ViewWithScore = () => {
                 label: "2014",
             },
         ])
-        setGroups([
-            {
+        serviceHust.findAllGroup().then(res => {
+            const resultGroup = [{
                 value: "",
                 label: "Tất cả",
-            },
-            {
-                value: "A01",
-                label: "A01",
-            },
-            {
-                value: "A00",
-                label: "A00",
-            },
-        ]);
-    }, []);
+            }]
+            res.map(data => {
+                if (data.groupType === 'BASIC' && typeTest === 0) {
+                    resultGroup.push({
+                        value: data.code,
+                        label: data.code,
+                    })
+                } else if (data.groupType === 'TSA' && typeTest === 1) {
+                    resultGroup.push({
+                        value: data.code,
+                        label: data.code,
+                    })
+                }
+            })
+            setGroups(resultGroup);
+            setGroup("");
+        })
+    }, [typeTest]);
+
+    useEffect(() => {
+        if (type === 3) {
+            serviceHust.findAllFacultyBySchoolId(currentRoute).then(res => {
+                let listIds = "";
+                res?.faculties.map(data => {
+                    listIds = data.id + "," + listIds
+                })
+                setFacultyId(listIds);
+            })
+        } else if (type === 4) {
+            setFacultyId(currentRoute)
+        }
+    }, [type]);
+
+    useEffect(() => {
+        serviceHust.searchBenchmark({
+            groupType: typeTest === 0 ? 'BASIC' : 'TSA',
+            facultyIds: facultyId,
+            pageSize: pageSize,
+            pageIndex: pageIndex
+        }).then(res => {
+            setResponse(res);
+            setData(res?.content.map(((body, index) => ({
+                index: index + 1,
+                major: body.faculty,
+                mark: body.score,
+                group: body.groups,
+                name: body.school
+            }))))
+        })
+    }, [typeTest, facultyId, pageSize, pageSize]);
 
     const columns = [
         {
@@ -102,7 +153,14 @@ const ViewWithScore = () => {
             title: 'Điểm chuẩn',
             dataIndex: 'mark',
             key: 'mark',
-            render: (text) => <Flex>{text} [<a> Xem thống kê</a>]</Flex>,
+            render: (text) => <Flex w={'70%'} justifyContent={"space-between"}>
+                <Flex>
+                    {text}
+                </Flex>
+                <Flex>
+                    [<a> Xem thống kê</a>]
+                </Flex>
+            </Flex>,
         },
         {
             title: 'Khối thi',
@@ -126,16 +184,6 @@ const ViewWithScore = () => {
             dataIndex: 'name',
             key: 'name',
         },
-    ]
-
-    const data = [
-        {
-            index: '1',
-            major: "Điện tử - Viễn thông",
-            mark: '22.02',
-            group: ["A00", "A01"],
-            name: "Trường Điện - Điện tử"
-        }
     ]
 
     const handleChangeGroup = (value) => {
