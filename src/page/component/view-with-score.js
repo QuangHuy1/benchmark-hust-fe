@@ -124,6 +124,10 @@ const ViewWithScore = () => {
         serviceHust.searchBenchmark({
             groupType: typeTest === 0 ? 'BASIC' : 'TSA',
             facultyIds: facultyId,
+            fromScore: mark[0],
+            toScore: mark[1],
+            year: year,
+            groupCodes: group,
             pageSize: pageSize,
             pageIndex: pageIndex
         }).then(res => {
@@ -132,11 +136,11 @@ const ViewWithScore = () => {
                 index: index + 1,
                 major: body.faculty,
                 mark: body.score,
-                group: body.groups,
+                group: group !== "" ? [group] : body.groups,
                 name: body.school
             }))))
         })
-    }, [typeTest, facultyId, pageSize, pageSize]);
+    }, [typeTest, facultyId, mark, year, group, pageSize, pageSize]);
 
     const columns = [
         {
