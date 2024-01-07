@@ -21,8 +21,9 @@ const ViewWithScore = () => {
     const [year, setYear] = useState("2023");
     const [years, setYears] = useState();
     const [groups, setGroups] = useState([])
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(5);
     const [pageIndex, setPageIndex] = useState(1);
+    const [pagination, setPagination] = useState({ pageSize: 5, current: 1 });
     const [data, setData] = useState([]);
     const [response, setResponse] = useState({});
     const [facultyId, setFacultyId] = useState("");
@@ -132,7 +133,7 @@ const ViewWithScore = () => {
             pageIndex: pageIndex
         }).then(res => {
             setResponse(res);
-            setData(res?.content.map(((body, index) => ({
+            setData(res.content.map(((body, index) => ({
                 index: index + 1,
                 major: body.faculty,
                 mark: body.score,
@@ -140,7 +141,7 @@ const ViewWithScore = () => {
                 name: body.school
             }))))
         })
-    }, [typeTest, facultyId, mark, year, group, pageSize, pageSize]);
+    }, [typeTest, facultyId, mark, year, group, pageIndex, pageSize]);
 
     const columns = [
         {
@@ -157,7 +158,7 @@ const ViewWithScore = () => {
             title: 'Điểm chuẩn',
             dataIndex: 'mark',
             key: 'mark',
-            render: (text) => <Flex w={'70%'} justifyContent={"space-between"}>
+            render: (text) => <Flex flexDir={"column"} justifyContent={"space-between"}>
                 <Flex>
                     {text}
                 </Flex>
@@ -240,6 +241,12 @@ const ViewWithScore = () => {
         setMark([mark[0], e.target.value]);
     };
 
+    const handleTableChange = (pagination) => {
+        setPageIndex(pagination);
+        console.log(pagination);
+        setPagination(pagination);
+    };
+
     return (
         <Flex w={"100%"} flexDir={"column"}>
             <Flex mb={30} w={"100%"} justifyContent={"space-between"} alignItems={"center"}>
@@ -305,7 +312,14 @@ const ViewWithScore = () => {
             </Flex>
 
             <Flex w={"100%"}>
-                <Table className={"_table_school_"} columns={columns} dataSource={data}/>
+                <Table className={"_table_school_"}
+                       pagination={{
+                           total: response.totalElements,
+                           ...pagination,
+                           onChange: handleTableChange, // Gọi hàm này khi người dùng thay đổi trang
+                       }}
+                       columns={columns}
+                       dataSource={data}/>
             </Flex>
 
         </Flex>
