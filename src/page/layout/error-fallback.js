@@ -1,6 +1,5 @@
 import { Box, Flex, Image, Kbd, Text } from '@chakra-ui/react';
 import ImgError from '../../assets/images/error.png';
-import { memo } from 'react';
 
 const ErrorFallback = ({ error }) => {
     return (
@@ -23,4 +22,4 @@ const ErrorFallback = ({ error }) => {
     );
 };
 
-export default memo(ErrorFallback);
+export default ErrorFallback;

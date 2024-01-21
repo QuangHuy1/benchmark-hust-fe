@@ -4,31 +4,34 @@ import {
 } from "@chakra-ui/react";
 import {Input, Select, Slider, Table, Tag} from "antd";
 import {useEffect, useState} from "react";
-import {useRecoilValue} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {typeState, typeTestState} from "../recoil";
 import {showToast} from "../../utils/helper";
 import {serviceHust} from "../../utils/service";
 import {useLocation} from "react-router-dom";
+import {GROUP_TYPES, YEARS} from "../../utils/const";
 
 const ViewWithScore = () => {
     const location = useLocation();
-    const { pathname } = location;
+    const {pathname} = location;
     const arrPath = pathname.split('/');
     const currentRoute = arrPath[arrPath.length - 1];
     const [mark, setMark] = useState([0, 30]);
     const [max, setMax] = useState(30);
     const [group, setGroup] = useState("");
     const [year, setYear] = useState("2023");
-    const [years, setYears] = useState();
+    const years = YEARS;
     const [groups, setGroups] = useState([])
-    const [pageSize, setPageSize] = useState(5);
+    const groupTypes = GROUP_TYPES;
+    const [groupType, setGroupType] = useState(0);
+    const pageSize = 5;
     const [pageIndex, setPageIndex] = useState(1);
-    const [pagination, setPagination] = useState({ pageSize: 5, current: 1 });
+    const [pagination, setPagination] = useState({pageSize: 5, current: 1});
     const [data, setData] = useState([]);
     const [response, setResponse] = useState({});
     const [facultyId, setFacultyId] = useState("");
-    const typeTest =  useRecoilValue(typeTestState);
-    const type =  useRecoilValue(typeState);
+    const [typeTest, setTypeTest] = useRecoilState(typeTestState)
+    const type = useRecoilValue(typeState);
 
     useEffect(() => {
         if (typeTest === 1) {
@@ -38,52 +41,6 @@ const ViewWithScore = () => {
             setMark([0, 30]);
             setMax(30)
         }
-        setYears([
-            {
-                value: "2024",
-                label: "2024",
-            },
-            {
-                value: "2023",
-                label: "2023",
-            },
-            {
-                value: "2022",
-                label: "2022",
-            },
-            {
-                value: "2021",
-                label: "2021",
-            },
-            {
-                value: "2020",
-                label: "2020",
-            },
-            {
-                value: "2019",
-                label: "2019",
-            },
-            {
-                value: "2018",
-                label: "2018",
-            },
-            {
-                value: "2017",
-                label: "2017",
-            },
-            {
-                value: "2016",
-                label: "2016",
-            },
-            {
-                value: "2015",
-                label: "2015",
-            },
-            {
-                value: "2014",
-                label: "2014",
-            },
-        ])
         serviceHust.findAllGroup().then(res => {
             const resultGroup = [{
                 value: "",
@@ -171,7 +128,7 @@ const ViewWithScore = () => {
             title: 'Khối thi',
             dataIndex: 'group',
             key: 'group',
-            render: (_, { group }) => (
+            render: (_, {group}) => (
                 <>
                     {group.map((tag) => {
                         let color = 'darkred';
@@ -192,18 +149,26 @@ const ViewWithScore = () => {
     ]
 
     const handleChangeGroup = (value) => {
-      setGroup(value);
+        setPageIndex(1);
+        setPagination({pageSize: 5, current: 1});
+        setGroup(value);
     }
 
     const handleChangeYear = (value) => {
+        setPageIndex(1);
+        setPagination({pageSize: 5, current: 1});
         setYear(value);
     }
 
     const handleMarkChange = (value) => {
+        setPageIndex(1);
+        setPagination({pageSize: 5, current: 1});
         setMark(value);
     };
 
     const handleMinInputChange = (e) => {
+        setPageIndex(1);
+        setPagination({pageSize: 5, current: 1});
         if (e.target.value.length === 0) {
             setMark([0, mark[1]]);
             return;
@@ -223,6 +188,8 @@ const ViewWithScore = () => {
     };
 
     const handleMaxInputChange = (e) => {
+        setPageIndex(1);
+        setPagination({pageSize: 5, current: 1});
         if (e.target.value.length === 0) {
             setMark([mark[0], 0]);
             return;
@@ -243,9 +210,38 @@ const ViewWithScore = () => {
 
     const handleTableChange = (pagination) => {
         setPageIndex(pagination);
-        console.log(pagination);
         setPagination(pagination);
     };
+
+    const handleChangeGroupType = (value) => {
+        setPageIndex(1);
+        setPagination({pageSize: 5, current: 1});
+        setGroupType(value);
+        if (value === 'TSA') {
+            setTypeTest(1);
+        } else {
+            setTypeTest(0);
+        }
+    }
+
+    const OptionSelect = ({value, options, functionChange}) => {
+        return (
+            <Select style={{width: '100%'}} showSearch
+                    value={value}
+                    onChange={functionChange}
+                    filterOption={(input, option) =>
+                        (option?.label ?? '').toLocaleLowerCase('vi').includes(input.toLocaleLowerCase('vi'))}
+                    filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? '').toLocaleLowerCase('vi').localeCompare((optionB?.label ?? '').toLocaleLowerCase('vi'))
+                    }
+                    options={options?.map(data => ({
+                        value: data?.id,
+                        label: data?.name,
+                    }))}
+            >
+            </Select>
+        )
+    }
 
     return (
         <Flex w={"100%"} flexDir={"column"}>
@@ -280,13 +276,22 @@ const ViewWithScore = () => {
 
                 <Flex mr={30} w={"20%"} flexDir={"column"}>
                     <FormControl mb={10}>
+                        <FormLabel>Hình thức thi</FormLabel>
+                    </FormControl>
+                    <Flex width='100%'>
+                        <OptionSelect value={groupType} options={groupTypes} functionChange={handleChangeGroupType}/>
+                    </Flex>
+                </Flex>
+
+                <Flex mr={30} w={"20%"} flexDir={"column"}>
+                    <FormControl mb={10}>
                         <FormLabel>Khối thi</FormLabel>
                     </FormControl>
                     <Flex width='100%'>
                         <Select
                             value={group}
                             style={{
-                                width: 120,
+                                width: '100%',
                             }}
                             onChange={handleChangeGroup}
                             options={groups}
@@ -302,7 +307,7 @@ const ViewWithScore = () => {
                         <Select
                             value={year}
                             style={{
-                                width: 120,
+                                width: "100%",
                             }}
                             onChange={handleChangeYear}
                             options={years}

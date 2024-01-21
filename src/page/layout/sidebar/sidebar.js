@@ -1,0 +1,112 @@
+import {Button, Flex, Heading, Icon, Image, Text, useMediaQuery} from "@chakra-ui/react";
+import Logo from "../../../assets/images/img.png";
+import { useCallback } from "react";
+import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi";
+import { Link } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import {showSidebarAtom} from "../../recoil";
+import Menu from "./menu/menu";
+import packageJson from "../../../../package.json";
+
+const Sidebar = () => {
+  const [showSidebar, setShowSidebar] = useRecoilState(showSidebarAtom);
+  const isMobileAndTablet = useMediaQuery("(max-width: 992px)");
+
+  const onToggleSidebar = useCallback(
+    () => setShowSidebar((prev) => !prev),
+    [setShowSidebar],
+  );
+
+  const onClickLogo = useCallback(() => {
+    if (!isMobileAndTablet) {
+      return;
+    }
+    setShowSidebar((prev) => !prev);
+  }, [isMobileAndTablet, setShowSidebar]);
+
+  return (
+    <Flex
+      direction="column"
+      pos="fixed"
+      top={0}
+      left={0}
+      overflow="hidden"
+      zIndex={200}
+      w={showSidebar ? 80 : isMobileAndTablet ? 0 : 0}
+      h="100vh"
+      bgColor="main.1"
+      color="#f2f2f2"
+      transitionDuration="300ms"
+    >
+      <Flex
+        h="64px"
+        w="full"
+        bgColor="main.2"
+        align="center"
+        px={5}
+        justify={showSidebar ? "space-between" : "center"}
+      >
+        {showSidebar && (
+          <Link
+            to="/"
+            style={{ width: "auto", height: "auto" }}
+            onClick={onClickLogo}
+          >
+            <Flex align="center" justify="center" gap={3} h="full">
+              <Image src={Logo} boxSize={7} opacity={0.95} />
+              <Heading
+                as="h2"
+                fontSize={18}
+                fontWeight={600}
+                noOfLines={1}
+                color={"darkred"}
+              >
+                Hust Benchmark
+              </Heading>
+            </Flex>
+          </Link>
+        )}
+
+        <Button
+          align="center"
+          bgColor="transparent"
+          _hover={{ bgColor: "transparent" }}
+          _active={{ bgColor: "transparent" }}
+          p={2}
+          minW={0}
+          data-group
+          transitionDuration="300ms"
+          onClick={onToggleSidebar}
+        >
+          <Icon
+            as={showSidebar ? HiChevronDoubleLeft : HiChevronDoubleRight}
+            fontSize={21}
+            color="#494B74"
+            _groupHover={{ color: "darkred" }}
+            transitionDuration="300ms"
+          />
+        </Button>
+      </Flex>
+      <Flex flex={1} w="full" overflowY="auto">
+        <Menu />
+      </Flex>
+      <Flex
+        h="45px"
+        w="full"
+        borderTop="1px solid #333"
+        align="center"
+        justify="center"
+        fontSize={16}
+      >
+        <Text color="#808080" noOfLines={1}>
+          {showSidebar && "Version: "}
+          <Text as="span" fontWeight={500}>
+            {packageJson.version}
+          </Text>
+        </Text>
+      </Flex>
+    </Flex>
+  );
+};
+
+export default Sidebar;

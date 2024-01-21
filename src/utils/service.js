@@ -38,6 +38,14 @@ let serviceHust = {
             params: params
         });
     },
+    addBenchmark: (params) => {
+        return API.request({
+            url: "/benchmark",
+            method: "POST",
+            baseURL: url,
+            params: params
+        });
+    },
     login: (params) => {
         return API.request({
             url: `/api/auth/login`,

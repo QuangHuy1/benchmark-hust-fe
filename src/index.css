@@ -174,3 +174,16 @@ code {
   color: darkred;
 }
 
+._btn_submit_score_ {
+  color: darkred;
+  background: #FAFAFA;
+  border-color: darkred;
+  margin-top: 1rem;
+  float: right;
+}
+
+._btn_submit_score_:hover {
+  background: darkred !important;
+  color: #FAFAFA !important;
+}
+
