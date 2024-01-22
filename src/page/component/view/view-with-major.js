@@ -5,10 +5,9 @@ import {useNavigate} from "react-router-dom";
 import {Input, Table} from "antd";
 import {showToast} from "../../../utils/helper";
 
-const { Search } = Input;
+const {Search} = Input;
 
 const ViewWithMajor = () => {
-    const navigate = useNavigate();
     const [faculties, setFaculties] = useState([]);
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
@@ -27,7 +26,8 @@ const ViewWithMajor = () => {
             title: 'Tên chuyên ngành',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <a onClick={() => navigate("/major/" + text.id)}>{text.value}</a>,
+            render: (text) => <a style={{fontWeight: 500, textDecoration: "underline"}}
+                                 onClick={() => window.location.href = "/major/" + text.id}>{text.value}</a>,
         },
         {
             title: 'Mã chuyên ngành',
@@ -58,7 +58,7 @@ const ViewWithMajor = () => {
                 code: entity?.code,
                 school: entity?.school?.vnName,
             }));
-            setFaculties(formattedData)
+            setFaculties(formattedData);
         }).catch(err => {
             setLoading(false);
             showToast({
@@ -69,6 +69,7 @@ const ViewWithMajor = () => {
     }, [name, pageIndex, pageSize]);
 
     const onSearchSchool = (value) => {
+        if (name === value) return;
         setLoading(true);
         setName(value);
         setPageIndex(1);
@@ -98,7 +99,7 @@ const ViewWithMajor = () => {
                        }}
                        loading={loading}
                        columns={columns}
-                       ataSource={faculties}/>
+                       dataSource={faculties}/>
             </Flex>
         </Flex>
     )

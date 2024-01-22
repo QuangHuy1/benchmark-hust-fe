@@ -1,16 +1,16 @@
 import {Flex, Icon} from "@chakra-ui/react";
 import {IoMdHome} from "react-icons/io";
 import {MdAccountCircle} from "react-icons/md";
-import {useRecoilValue} from "recoil";
-import {typeTestState} from "../recoil";
-import {useNavigate} from "react-router-dom";
+import {useRecoilValue, useSetRecoilState} from "recoil";
+import {tokenState, typeTestState, userProfileState} from "../recoil";
 import Login from "../component/login";
-import {useState} from "react";
+import {useCallback, useState} from "react";
+import DropdownLogin from "../component/dropdown-login";
 
 const Header = () => {
     const typeTest = useRecoilValue(typeTestState);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const navigate = useNavigate();
+    const userProfile = useRecoilValue(userProfileState);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -57,19 +57,21 @@ const Header = () => {
                 </Flex>
 
                 {/*Login*/}
-                <Flex w={'40%'} justifyContent={"end"} alignItems={"center"}>
-                    <Flex className={"_main_btn_login_"}>
-                        <Flex className={"_btn_login_"}
-                              mr={20}
-                              onClick={showModal}
-                        >
-                            Đăng nhập
+                {userProfile ?
+                    <DropdownLogin/> :
+                    <Flex w={'40%'} justifyContent={"end"} alignItems={"center"}>
+                        <Flex className={"_main_btn_login_"} onClick={showModal}>
+                            <Flex className={"_btn_login_"}
+                                  mr={20}
+                            >
+                                {userProfile ? userProfile?.fullName : 'Đăng nhập'}
+                            </Flex>
+                            <Icon fontSize={26} cursor={"pointer"} as={MdAccountCircle}/>
                         </Flex>
                         <Login isModalOpen={isModalOpen}
                                setIsModalOpen={setIsModalOpen}/>
-                        <Icon fontSize={26} cursor={"pointer"} as={MdAccountCircle}/>
                     </Flex>
-                </Flex>
+                }
             </Flex>
         </Flex>
     )

@@ -187,3 +187,7 @@ code {
   color: #FAFAFA !important;
 }
 
+.dropdown-login {
+  width: fit-content;
+}
+

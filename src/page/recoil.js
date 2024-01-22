@@ -1,4 +1,4 @@
-import { atom, selector } from 'recoil';
+import {atom, selector} from 'recoil';
 
 const typeAtom = atom({
     key: 'TYPE',
@@ -10,8 +10,8 @@ const typeAtom = atom({
 
 export const typeState = selector({
     key: 'TYPE_SELECTOR',
-    get: ({ get }) => get(typeAtom),
-    set: ({ set }, newValue) => {
+    get: ({get}) => get(typeAtom),
+    set: ({set}, newValue) => {
         set(typeAtom, newValue);
     }
 });
@@ -26,8 +26,8 @@ const typeTestAtom = atom({
 
 export const typeTestState = selector({
     key: 'TYPE_TEST_SELECTOR',
-    get: ({ get }) => get(typeTestAtom),
-    set: ({ set }, newValue) => {
+    get: ({get}) => get(typeTestAtom),
+    set: ({set}, newValue) => {
         set(typeTestAtom, newValue);
     }
 });
@@ -50,22 +50,34 @@ const tokenAtom = atom({
 
 export const tokenState = selector({
     key: "TOKEN_SELECTOR",
-    get: ({ get }) => get(tokenAtom),
-    set: ({ set }, newValue) => {
-        localStorage.setItem("access-token", newValue);
+    get: ({get}) => get(tokenAtom),
+    set: ({set}, newValue) => {
+        if (!newValue) {
+            localStorage.clear();
+        } else {
+            localStorage.setItem("access-token", newValue);
+        }
         set(tokenAtom, newValue);
     },
 });
 
 const userProfile = atom({
     key: "USER_PROFILE",
-    default: null,
+    default: new Promise((resolve) => {
+        const user = JSON.parse(localStorage.getItem("user-profile"));
+        resolve(user);
+    }),
 });
 
 export const userProfileState = selector({
     key: "USER_PROFILE_SELECTOR",
-    get: ({ get }) => get(userProfile),
-    set: ({ set }, newValue) => {
+    get: ({get}) => get(userProfile),
+    set: ({set}, newValue) => {
+        if (!newValue) {
+            localStorage.clear();
+        } else {
+            localStorage.setItem("user-profile", JSON.stringify(newValue));
+        }
         set(userProfile, newValue);
     },
 });

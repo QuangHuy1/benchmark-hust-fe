@@ -40,7 +40,7 @@ const HomeAdmin = () => {
                 mx="auto"
             >
                 <Flex align="center" gap={3}>
-                    <Image src={Logo} boxSize={16} />
+                    {/*<Image src={Logo} boxSize={16} />*/}
                     <Heading as="h2" fontSize={24} fontWeight={600} noOfLines={1}>
                         Hust Benchmark
                     </Heading>

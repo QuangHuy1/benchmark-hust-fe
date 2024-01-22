@@ -9,6 +9,8 @@ import HomeAdmin from "../page/layout/home-admin";
 import AdminViewScore from "../page/component/admin/score/admin-view-score";
 import {useRecoilValue} from "recoil";
 import {tokenState} from "../page/recoil";
+import AdminViewSchool from "../page/component/admin/school/admin-view-school";
+import AdminViewMajor from "../page/component/admin/major/admin-view-major";
 
 const AppRoute = () => {
     const token = useRecoilValue(tokenState);
@@ -31,6 +33,8 @@ const AppRoute = () => {
                     <Route path="/admin" element={<MainAdmin/>}>
                         <Route index element={<HomeAdmin/>}/>
                         <Route path="score" element={<AdminViewScore/>}/>
+                        <Route path="school" element={<AdminViewSchool/>}/>
+                        <Route path="major" element={<AdminViewMajor/>}/>
                     </Route>
                 }
             </Routes>

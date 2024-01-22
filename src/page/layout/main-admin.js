@@ -27,13 +27,17 @@ const MainAdmin = () => {
     );
     const setToken = useSetRecoilState(tokenState);
     const setUserProfile = useSetRecoilState(userProfileState);
-    const onLogout = useCallback(() => setToken(""), [setToken]);
+    const onLogout = useCallback(() => {
+        setToken("");
+        setUserProfile("")
+    }, [setToken, setUserProfile]);
     const onToggleSidebar = useCallback(
         () => setShowSidebar((prev) => !prev),
         [setShowSidebar],
     );
 
     const validateToken = () => {
+        if (!token) return;
         serviceHust
             .getUser()
             .then((response) => {

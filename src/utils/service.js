@@ -32,11 +32,12 @@ let serviceHust = {
             baseURL: url,
         });
     },
-    findAllGroup: () => {
+    findAllGroup: (params) => {
         return API.request({
             url: "/group",
             method: "GET",
             baseURL: url,
+            params: params
         });
     },
     searchBenchmark: (params) => {
@@ -65,7 +66,7 @@ let serviceHust = {
     },
     getUser: () => {
         return API.request({
-            url: `/auth/user`,
+            url: `/user/token`,
             method: "GET",
             baseURL: url,
         });

@@ -60,9 +60,10 @@ const Login = ({isModalOpen, setIsModalOpen}) => {
                         <Input placeholder="Vui lòng nhập username" onChange={onChangeUsername}>
                         </Input>
                     </Form.Item>
-                    <Form.Item label="Password" name="password">
-                        <Input placeholder="Vui lòng nhập password" onChange={onChangePassword}
+                    <Form.Item label="Password"
+                               name="password"
                                rules={[{required: true, message: 'Vui lòng nhập password'}]}>
+                        <Input type="password" placeholder="Vui lòng nhập password" onChange={onChangePassword}>
                         </Input>
                     </Form.Item>
                     <Form.Item>

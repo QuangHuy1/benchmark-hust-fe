@@ -16,7 +16,10 @@ import {tokenState, userProfileState} from "../../../recoil";
 const UserInfo = () => {
   const setToken = useSetRecoilState(tokenState);
   const userProfile = useRecoilValue(userProfileState);
-  const onLogout = useCallback(() => setToken(""), [setToken]);
+  const onLogout = useCallback(() => {
+    setToken("");
+    window.location.href = "/";
+  }, [setToken]);
   const isMobileAndTablet = useMediaQuery("(max-width: 992px)");
   const { isOpen, onToggle, onClose } = useDisclosure();
 

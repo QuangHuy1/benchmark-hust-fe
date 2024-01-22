@@ -53,7 +53,7 @@ const Sidebar = () => {
             onClick={onClickLogo}
           >
             <Flex align="center" justify="center" gap={3} h="full">
-              <Image src={Logo} boxSize={7} opacity={0.95} />
+              {/*<Image src={Logo} boxSize={7} opacity={0.95} />*/}
               <Heading
                 as="h2"
                 fontSize={18}

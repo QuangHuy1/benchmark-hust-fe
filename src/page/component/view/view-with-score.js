@@ -5,7 +5,7 @@ import {
 import {Input, Select, Slider, Table, Tag} from "antd";
 import {useEffect, useState} from "react";
 import {useRecoilState, useRecoilValue} from "recoil";
-import {typeState, typeTestState} from "../../recoil";
+import {tokenState, typeState, typeTestState} from "../../recoil";
 import {showToast} from "../../../utils/helper";
 import {serviceHust} from "../../../utils/service";
 import {useLocation} from "react-router-dom";
@@ -32,6 +32,7 @@ const ViewWithScore = () => {
     const [facultyId, setFacultyId] = useState("");
     const [typeTest, setTypeTest] = useRecoilState(typeTestState)
     const type = useRecoilValue(typeState);
+    const token = useRecoilValue(tokenState);
 
     useEffect(() => {
         if (typeTest === 1) {
@@ -41,7 +42,10 @@ const ViewWithScore = () => {
             setMark([0, 30]);
             setMax(30)
         }
-        serviceHust.findAllGroup().then(res => {
+        serviceHust.findAllGroup({
+            pageSize: 100,
+            pageIndex: 1
+        }).then(res => {
             const resultGroup = [{
                 value: "",
                 label: "Tất cả",
@@ -84,7 +88,7 @@ const ViewWithScore = () => {
             facultyIds: facultyId,
             fromScore: mark[0],
             toScore: mark[1],
-            year: year,
+            years: year,
             groupCodes: group,
             pageSize: pageSize,
             pageIndex: pageIndex
@@ -274,14 +278,16 @@ const ViewWithScore = () => {
                     </Flex>
                 </Flex>
 
-                <Flex mr={30} w={"20%"} flexDir={"column"}>
-                    <FormControl mb={10}>
-                        <FormLabel>Hình thức thi</FormLabel>
-                    </FormControl>
-                    <Flex width='100%'>
-                        <OptionSelect value={groupType} options={groupTypes} functionChange={handleChangeGroupType}/>
+                {token &&
+                    <Flex mr={30} w={"20%"} flexDir={"column"}>
+                        <FormControl mb={10}>
+                            <FormLabel>Hình thức thi</FormLabel>
+                        </FormControl>
+                        <Flex width='100%'>
+                            <OptionSelect value={groupType} options={groupTypes} functionChange={handleChangeGroupType}/>
+                        </Flex>
                     </Flex>
-                </Flex>
+                }
 
                 <Flex mr={30} w={"20%"} flexDir={"column"}>
                     <FormControl mb={10}>

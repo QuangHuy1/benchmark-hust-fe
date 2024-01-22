@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {serviceHust} from "../../../utils/service";
 import {useNavigate} from "react-router-dom";
 
-const { Search } = Input;
+const {Search} = Input;
 const ViewWithSchool = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ const ViewWithSchool = () => {
         setLoading(false);
         console.log(value);
     }
-    
+
     const columns = [
         {
             title: 'STT',
@@ -22,10 +22,16 @@ const ViewWithSchool = () => {
             key: 'index',
         },
         {
-            title: 'Tên trường',
+            title: 'Tên trường (VI)',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <a onClick={() => navigate("/school/" + text.id)}>{text.value}</a>,
+            render: (text) => <a style={{fontWeight: 500, textDecoration: "underline"}}
+                                 onClick={() => navigate("/school/" + text.id)}>{text.value}</a>,
+        },
+        {
+            title: 'Tên trường (EN)',
+            dataIndex: 'nameEn',
+            key: 'nameEn',
         },
         {
             title: 'Mã trường',
@@ -42,6 +48,7 @@ const ViewWithSchool = () => {
                     value: entity?.vnName,
                     id: entity?.id
                 },
+                nameEn: entity?.enName,
                 code: entity?.abbreviations,
             }));
             setData(formattedData)

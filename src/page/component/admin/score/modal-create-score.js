@@ -31,6 +31,22 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
     }, []);
 
     useEffect(() => {
+        serviceHust.findAllGroup({
+            pageSize: 100,
+            pageIndex: 1,
+            groupType: groupType
+        }).then(res => {
+            const formattedData = res?.map((entity) => ({
+                code: entity?.code,
+                name: entity?.code,
+                id: entity?.id
+            }));
+            setGroupIds(formattedData);
+        })
+
+    }, [groupType]);
+
+    useEffect(() => {
         serviceHust.findAllFacultyBySchoolId(school).then(res => {
             const formattedData = res?.faculties?.map((entity) => ({
                 code: entity?.code,
@@ -61,13 +77,41 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
         )
     }
 
+    const OptionSelectMulti = ({value, options, functionChange}) => {
+        return (
+            <Select showSearch
+                    mode="multiple"
+                    value={value}
+                    onChange={functionChange}
+                    optionLabelProp="label"
+                    filterOption={(input, option) =>
+                        (option?.label ?? '').toLocaleLowerCase('vi').includes(input.toLocaleLowerCase('vi'))}
+                    filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? '').toLocaleLowerCase('vi').localeCompare((optionB?.label ?? '').toLocaleLowerCase('vi'))
+                    }
+                    options={options?.map(data => ({
+                        value: data?.id,
+                        label: data?.name,
+                    }))}
+            >
+            </Select>
+        )
+    }
+
     const handleCancel = () => {
         form.resetFields();
         setIsModalOpen(false);
     };
 
     const save = () => {
-        console.log(form.getFieldValue())
+        const params = {
+            year: form.getFieldValue()?.year,
+            score: form.getFieldValue()?.score,
+            groupType: form.getFieldValue()?.groupType,
+            facultyId: form.getFieldValue()?.facultyId,
+            groupIds: form.getFieldValue()?.groupIds?.join(",")
+        };
+        console.log(params);
         serviceHust.addBenchmark(form.getFieldValue())
             .then(res => {
                 showToast({
@@ -94,6 +138,15 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
         setFaculty("");
     }
 
+    const onChangeGroupIds = (value) => {
+        const values = groupId;
+        values.push(value);
+        form.setFieldsValue({
+            groupIds: value
+        })
+        setGroupId(values);
+    }
+
     const onChangeFaculty = (value) => {
         form.setFieldsValue({
             facultyId: value
@@ -113,6 +166,10 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
             groupType: value
         })
         setGroupType(value);
+        form.setFieldsValue({
+            groupIds: []
+        })
+        setGroupId([]);
     }
 
     const onChangeBenchmark = (e) => {
@@ -150,9 +207,10 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
                            rules={[{required: true, message: 'Vui lòng chọn loại bài thi'}]}>
                     <OptionSelect value={groupType} options={groupTypes} functionChange={onChangeGroupType}/>
                 </Form.Item>
-                <Form.Item label="Khối thi">
-                    <Select>
-                    </Select>
+                <Form.Item label="Khối thi"
+                           name="groupIds"
+                           rules={[{required: true, message: 'Vui lòng chọn loại bài thi'}]}>
+                    <OptionSelectMulti value={groupId} options={groupIds} functionChange={onChangeGroupIds}/>
                 </Form.Item>
                 <Form.Item label="Năm thi"
                            name="year"
