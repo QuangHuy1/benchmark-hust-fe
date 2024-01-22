@@ -1,10 +1,10 @@
 import background from "../../assets/images/background.png";
 import {Flex} from "@chakra-ui/react";
 import Header from "./header";
-import ViewWithSchool from "../component/view-with-school";
+import ViewWithSchool from "../component/view/view-with-school";
 import {useEffect} from "react";
-import ViewWithMajor from "../component/view-with-major";
-import ViewWithScore from "../component/view-with-score";
+import ViewWithMajor from "../component/view/view-with-major";
+import ViewWithScore from "../component/view/view-with-score";
 import {useRecoilState} from "recoil";
 import {typeState, typeTestState} from "../recoil";
 import {useNavigate} from "react-router-dom";

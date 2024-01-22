@@ -1,13 +1,20 @@
 import {Flex, Icon} from "@chakra-ui/react";
 import {IoMdHome} from "react-icons/io";
-import { MdAccountCircle } from "react-icons/md";
+import {MdAccountCircle} from "react-icons/md";
 import {useRecoilValue} from "recoil";
 import {typeTestState} from "../recoil";
 import {useNavigate} from "react-router-dom";
+import Login from "../component/login";
+import {useState} from "react";
 
 const Header = () => {
     const typeTest = useRecoilValue(typeTestState);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
 
     return (
         <Flex w={"100%"}
@@ -54,10 +61,12 @@ const Header = () => {
                     <Flex className={"_main_btn_login_"}>
                         <Flex className={"_btn_login_"}
                               mr={20}
-                              onClick={() => window.location.href = "/"}
+                              onClick={showModal}
                         >
                             Đăng nhập
                         </Flex>
+                        <Login isModalOpen={isModalOpen}
+                               setIsModalOpen={setIsModalOpen}/>
                         <Icon fontSize={26} cursor={"pointer"} as={MdAccountCircle}/>
                     </Flex>
                 </Flex>

@@ -9,12 +9,13 @@ import {
     MAIN_PADDING_X,
 } from "../../utils/const";
 import {showSidebarAtom, tokenState, userProfileState} from "../recoil";
-import {useMediaQuery} from "../../utils/helper";
+import {showToast, useMediaQuery} from "../../utils/helper";
 import ErrorFallback from "./error-fallback";
 import Section from "./section/section";
 import BreadCrumb from "./header/breadcrumb/breadcrumb";
 import HeaderAdmin from "./header/header-admin";
 import Sidebar from "./sidebar/sidebar";
+import {serviceHust} from "../../utils/service";
 
 const MainAdmin = () => {
     const location = useLocation();
@@ -32,27 +33,24 @@ const MainAdmin = () => {
         [setShowSidebar],
     );
 
-    // const validateToken = () => {
-    //     serviceIVND
-    //         .authentication(token)
-    //         .then((response) => {
-    //             setUserProfile(response);
-    //         })
-    //         .catch((e) => {
-    //             if (e.code === "IVND-APP-54") {
-    //                 showToast("Phiên dăng nhập hết hạn");
-    //                 onLogout();
-    //                 window.location.href = `${process.env.REACT_APP_LOGIN_URL}/logout?redirect-app=${process.env.REACT_APP_LOGIN_TYPE}`;
-    //             }
-    //             if (e.code === "IVND-APP-05") {
-    //                 onLogout();
-    //                 window.location.href = `${process.env.REACT_APP_LOGIN_URL}/logout?redirect-app=${process.env.REACT_APP_LOGIN_TYPE}`;
-    //             }
-    //         });
-    // };
+    const validateToken = () => {
+        serviceHust
+            .getUser()
+            .then((response) => {
+                setUserProfile(response);
+            })
+            .catch((err) => {
+                showToast({
+                    content: err?.message,
+                    status: 'error'
+                })
+                onLogout();
+                window.location.href = "/";
+            });
+    };
 
     useEffect(() => {
-        // validateToken();
+        validateToken();
     }, [token]);
 
     return (

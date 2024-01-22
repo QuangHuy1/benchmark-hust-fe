@@ -5,11 +5,11 @@ import {
 import {Input, Select, Slider, Table, Tag} from "antd";
 import {useEffect, useState} from "react";
 import {useRecoilState, useRecoilValue} from "recoil";
-import {typeState, typeTestState} from "../recoil";
-import {showToast} from "../../utils/helper";
-import {serviceHust} from "../../utils/service";
+import {typeState, typeTestState} from "../../recoil";
+import {showToast} from "../../../utils/helper";
+import {serviceHust} from "../../../utils/service";
 import {useLocation} from "react-router-dom";
-import {GROUP_TYPES, YEARS} from "../../utils/const";
+import {GROUP_TYPES, YEARS} from "../../../utils/const";
 
 const ViewWithScore = () => {
     const location = useLocation();

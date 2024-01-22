@@ -1,7 +1,7 @@
 import {Flex} from "@chakra-ui/react";
 import {Input, Table} from 'antd';
 import {useEffect, useState} from "react";
-import {serviceHust} from "../../utils/service";
+import {serviceHust} from "../../../utils/service";
 import {useNavigate} from "react-router-dom";
 
 const { Search } = Input;

@@ -1,10 +1,10 @@
 import {useState} from "react";
 import {Flex} from "@chakra-ui/react";
 import {Button} from "antd";
-import ViewWithScore from "../../view/view-with-score";
-import ModalCreateScore from "./modal-create-score";
+import ModalCreateSchool from "./modal-create-school";
+import ViewWithSchool from "../../view/view-with-school";
 
-const AdminViewScore = () => {
+const AdminViewSchool = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -22,11 +22,11 @@ const AdminViewScore = () => {
                     Thêm mới
                 </Button>
             </Flex>
-            <ViewWithScore/>
-            <ModalCreateScore isModalOpen={isModalOpen}
-                              setIsModalOpen={setIsModalOpen}/>
+            <ViewWithSchool/>
+            <ModalCreateSchool isModalOpen={isModalOpen}
+                               setIsModalOpen={setIsModalOpen}/>
         </Flex>
     )
 }
 
-export default AdminViewScore;
+export default AdminViewSchool;

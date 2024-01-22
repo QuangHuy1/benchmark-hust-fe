@@ -9,11 +9,20 @@ let serviceHust = {
             baseURL: url,
         });
     },
-    findAllFaculty: () => {
+    addSchool: (params) => {
+        return API.request({
+            url: "/school",
+            method: "POST",
+            baseURL: url,
+            params: params
+        });
+    },
+    findAllFaculty: (params) => {
         return API.request({
             url: "/faculty",
             method: "GET",
             baseURL: url,
+            params: params
         });
     },
     findAllFacultyBySchoolId: (id) => {
@@ -48,10 +57,17 @@ let serviceHust = {
     },
     login: (params) => {
         return API.request({
-            url: `/api/auth/login`,
+            url: `/auth/login`,
             method: "POST",
             baseURL: url,
             params: params,
+        });
+    },
+    getUser: () => {
+        return API.request({
+            url: `/auth/user`,
+            method: "GET",
+            baseURL: url,
         });
     },
     changePassword: (params) => {

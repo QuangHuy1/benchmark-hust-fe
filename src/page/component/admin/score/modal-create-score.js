@@ -3,7 +3,6 @@ import {useEffect, useState} from "react";
 import {serviceHust} from "../../../../utils/service";
 import {GROUP_TYPES, YEARS} from "../../../../utils/const";
 import {showToast} from "../../../../utils/helper";
-import {Flex} from "@chakra-ui/react";
 
 const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
     const [form] = Form.useForm();
@@ -129,7 +128,7 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
     }
 
     return (
-        <Modal title="Nhập điểm chuẩn"
+        <Modal title="Thêm điểm chuẩn"
                open={isModalOpen}
                onCancel={handleCancel}
                width="100%"

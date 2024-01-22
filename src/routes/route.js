@@ -6,10 +6,13 @@ import Main from "../page/layout/main";
 import Home from "../page/layout/home";
 import MainAdmin from "../page/layout/main-admin";
 import HomeAdmin from "../page/layout/home-admin";
-import ViewWithScore from "../page/component/view-with-score";
 import AdminViewScore from "../page/component/admin/score/admin-view-score";
+import {useRecoilValue} from "recoil";
+import {tokenState} from "../page/recoil";
 
 const AppRoute = () => {
+    const token = useRecoilValue(tokenState);
+
     return (
         <ErrorBoundary FallbackComponent={ErrorFallback}>
             <Routes>
@@ -24,10 +27,12 @@ const AppRoute = () => {
                     <Route path="*" element={<NotFound404/>}/>
                 </Route>
 
-                <Route path="/admin" element={<MainAdmin/>}>
-                    <Route index element={<HomeAdmin/>}/>
-                    <Route path="score" element={<AdminViewScore/>}/>
-                </Route>
+                {token &&
+                    <Route path="/admin" element={<MainAdmin/>}>
+                        <Route index element={<HomeAdmin/>}/>
+                        <Route path="score" element={<AdminViewScore/>}/>
+                    </Route>
+                }
             </Routes>
         </ErrorBoundary>
     );
