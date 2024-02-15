@@ -26,6 +26,7 @@ const AppRoute = () => {
                     <Route path="/major/:id" element={<Home/>}/>
                     <Route path="/major" element={<Home/>}/>
                     <Route path="/score" element={<Home/>}/>
+                    <Route path="/recommend" element={<Home/>}/>
                     <Route path="*" element={<NotFound404/>}/>
                 </Route>
 

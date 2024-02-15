@@ -1,7 +1,6 @@
 import {Flex} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {serviceHust} from "../../../utils/service";
-import {useNavigate} from "react-router-dom";
 import {Input, Table} from "antd";
 import {showToast} from "../../../utils/helper";
 

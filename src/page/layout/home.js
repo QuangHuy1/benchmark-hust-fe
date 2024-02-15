@@ -8,6 +8,7 @@ import ViewWithScore from "../component/view/view-with-score";
 import {useRecoilState} from "recoil";
 import {typeState, typeTestState} from "../recoil";
 import {useNavigate} from "react-router-dom";
+import ViewWithRecommend from "../component/view/view-with-recommend";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -27,6 +28,8 @@ const Home = () => {
             setType(1);
         } else if (window.location.pathname.startsWith("/score")) {
             setType(2);
+        } else if (window.location.pathname.startsWith("/recommend")) {
+            setType(5);
         }
     }, [window.location.pathname]);
 
@@ -104,6 +107,7 @@ const Home = () => {
                         {type === 2 && <ViewWithScore/>}
                         {type === 3 && <ViewWithScore/>}
                         {type === 4 && <ViewWithScore/>}
+                        {type === 5 && <ViewWithRecommend/>}
                     </Flex>
 
                 </Flex>
