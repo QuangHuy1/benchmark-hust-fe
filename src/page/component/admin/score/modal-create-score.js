@@ -4,7 +4,7 @@ import {serviceHust} from "../../../../utils/service";
 import {GROUP_TYPES, YEARS} from "../../../../utils/const";
 import {showToast} from "../../../../utils/helper";
 
-const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
+const ModalCreateScore = ({isModalOpen, setIsModalOpen, record, refresh}) => {
     const [form] = Form.useForm();
     const [schools, setSchools] = useState([]);
     const [school, setSchool] = useState("");
@@ -17,6 +17,41 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
     const years = YEARS.slice().reverse();
     const [year, setYear] = useState("");
     const [benchmark, setBenchmark] = useState("");
+
+    useEffect(() => {
+        if (record) {
+            console.log(record);
+            form.setFieldsValue({
+                school: record?.data?.content?.school?.id
+            })
+            setSchool(record?.data?.content?.school?.id);
+
+            form.setFieldsValue({
+                facultyId: record?.data?.content?.id
+            })
+            setFaculty(record?.data?.content?.id);
+
+            form.setFieldsValue({
+                groupIds: record?.data?.content?.groupIds
+            })
+            setGroupId(record?.data?.content?.groupIds);
+
+            form.setFieldsValue({
+                year: record?.data?.content?.year
+            })
+            setYear(record?.data?.content?.year);
+
+            form.setFieldsValue({
+                groupType: record?.data?.content?.groupType
+            })
+            setGroupType(record?.data?.content?.groupType);
+
+            form.setFieldsValue({
+                score: record?.data?.content?.score
+            })
+            setBenchmark(record?.data?.content?.score);
+        }
+    }, [isModalOpen]);
 
     useEffect(() => {
         serviceHust.findAllSchool().then(res => {
@@ -47,6 +82,9 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
     }, [groupType]);
 
     useEffect(() => {
+        if (school === undefined) {
+            return;
+        }
         serviceHust.findAllFacultyBySchoolId(school).then(res => {
             const formattedData = res?.faculties?.map((entity) => ({
                 code: entity?.code,
@@ -62,6 +100,7 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
         return (
             <Select showSearch
                     value={value}
+                    disabled={record?.action === 'DELETE'}
                     onChange={functionChange}
                     filterOption={(input, option) =>
                         (option?.label ?? '').toLocaleLowerCase('vi').includes(input.toLocaleLowerCase('vi'))}
@@ -82,6 +121,7 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
             <Select showSearch
                     mode="multiple"
                     value={value}
+                    disabled={record?.action === 'DELETE'}
                     onChange={functionChange}
                     optionLabelProp="label"
                     filterOption={(input, option) =>
@@ -100,38 +140,88 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
 
     const handleCancel = () => {
         form.resetFields();
+        setGroupId([]);
         setIsModalOpen(false);
     };
 
     const save = () => {
-        const params = {
-            year: form.getFieldValue()?.year,
-            score: form.getFieldValue()?.score,
-            groupType: form.getFieldValue()?.groupType,
-            facultyId: form.getFieldValue()?.facultyId,
-            groupIds: form.getFieldValue()?.groupIds?.join(",")
-        };
-        console.log(params);
-        serviceHust.addBenchmark(form.getFieldValue())
-            .then(res => {
-                showToast({
-                    content: "Thêm điểm thành công!",
-                    status: 'success',
+        if (record?.action === 'EDIT') {
+            const params = {
+                year: form.getFieldValue()?.year,
+                score: form.getFieldValue()?.score,
+                groupType: form.getFieldValue()?.groupType,
+                facultyId: form.getFieldValue()?.facultyId,
+                groupIds: form.getFieldValue()?.groupIds?.join(",")
+            };
+            console.log(params);
+            serviceHust.editBenchmark(form.getFieldValue(), record?.data?.content?.id)
+                .then(() => {
+                    showToast({
+                        content: "Chỉnh sửa điểm thành công!",
+                        status: 'success',
+                    });
+                    refresh();
+                })
+                .catch(err => {
+                    showToast({
+                        content: err?.message,
+                        status: 'error'
+                    });
                 });
-            })
-            .catch(err => {
-                showToast({
-                    content: err?.message,
-                    status: 'error'
+        } else if (record?.action === 'DELETE') {
+            const params = {
+                year: form.getFieldValue()?.year,
+                score: form.getFieldValue()?.score,
+                groupType: form.getFieldValue()?.groupType,
+                facultyId: form.getFieldValue()?.facultyId,
+                groupIds: form.getFieldValue()?.groupIds?.join(",")
+            };
+            console.log(params);
+            serviceHust.deleteBenchmark(form.getFieldValue(), record?.data?.content?.id)
+                .then(() => {
+                    showToast({
+                        content: "Xoá điểm điểm thành công!",
+                        status: 'success',
+                    });
+                    refresh();
+                })
+                .catch(err => {
+                    showToast({
+                        content: err?.message,
+                        status: 'error'
+                    });
                 });
-            })
+        } else {
+            const params = {
+                year: form.getFieldValue()?.year,
+                score: form.getFieldValue()?.score,
+                groupType: form.getFieldValue()?.groupType,
+                facultyId: form.getFieldValue()?.facultyId,
+                groupIds: form.getFieldValue()?.groupIds?.join(",")
+            };
+            console.log(params);
+            serviceHust.addBenchmark(form.getFieldValue())
+                .then(() => {
+                    showToast({
+                        content: "Thêm điểm thành công!",
+                        status: 'success',
+                    });
+                    refresh();
+                })
+                .catch(err => {
+                    showToast({
+                        content: err?.message,
+                        status: 'error'
+                    });
+                });
+        }
     }
 
     const onChangeSchool = (value) => {
         form.setFieldsValue({
             school: value
         })
-        setSchool(value)
+        setSchool(value);
         form.setFieldsValue({
             facultyId: ""
         })
@@ -139,12 +229,10 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
     }
 
     const onChangeGroupIds = (value) => {
-        const values = groupId;
-        values.push(value);
         form.setFieldsValue({
             groupIds: value
         })
-        setGroupId(values);
+        setGroupId(value);
     }
 
     const onChangeFaculty = (value) => {
@@ -220,7 +308,7 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen}) => {
                 <Form.Item label="Điểm chuẩn"
                            name="score"
                            rules={[{required: true, message: 'Vui lòng nhập điểm chuẩn'}]}>
-                    <Input value={benchmark} onChange={onChangeBenchmark}/>
+                    <Input disabled={record?.action === 'DELETE'} value={benchmark} onChange={onChangeBenchmark}/>
                 </Form.Item>
 
                 <Form.Item>

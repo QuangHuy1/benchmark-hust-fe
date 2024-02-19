@@ -1,12 +1,14 @@
-import {Flex} from "@chakra-ui/react";
+import {Flex, Icon} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {serviceHust} from "../../../utils/service";
-import {Input, Table} from "antd";
+import {Input, Space, Table} from "antd";
 import {showToast} from "../../../utils/helper";
+import {MdDelete, MdEdit} from "react-icons/md";
+import ModalCreateMajor from "../admin/major/modal-create-major";
 
 const {Search} = Input;
 
-const ViewWithMajor = () => {
+const ViewWithMajor = ({isModalOpen, setIsModalOpen, isAdmin}) => {
     const [faculties, setFaculties] = useState([]);
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
@@ -14,8 +16,9 @@ const ViewWithMajor = () => {
     const [pageIndex, setPageIndex] = useState(1);
     const pageSize = 5;
     const [pagination, setPagination] = useState({pageSize: 5, current: 1});
+    const [record, setRecord] = useState({});
 
-    const columns = [
+    const columns = isAdmin ? [
         {
             title: 'STT',
             dataIndex: 'index',
@@ -38,9 +41,54 @@ const ViewWithMajor = () => {
             dataIndex: 'school',
             key: 'school',
         },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Icon className={"_icon_"} fontSize={20} cursor={"pointer"} onClick={() => {
+                        setIsModalOpen(true);
+                        setRecord({
+                            action: 'EDIT',
+                            data: record
+                        });
+                    }} as={MdEdit}/>
+                    <Icon className={"_icon_"} fontSize={20} cursor={"pointer"} onClick={() => {
+                        setIsModalOpen(true);
+                        setRecord({
+                            action: 'DELETE',
+                            data: record
+                        });
+                    }} as={MdDelete}/>
+                </Space>
+            ),
+        },
+    ] : [
+        {
+            title: 'STT',
+            dataIndex: 'index',
+            key: 'index',
+        },
+        {
+            title: 'Tên chuyên ngành',
+            dataIndex: 'name',
+            key: 'name',
+            render: (text) => <a style={{fontWeight: 500, textDecoration: "underline"}}
+                                 onClick={() => window.location.href = "/major/" + text.id}>{text.value}</a>,
+        },
+        {
+            title: 'Mã chuyên ngành',
+            dataIndex: 'code',
+            key: 'code',
+        },
+        {
+            title: 'Trường',
+            dataIndex: 'school',
+            key: 'school',
+        }
     ]
 
-    useEffect(() => {
+    const findAllFaculty = () => {
         serviceHust.findAllFaculty({
             name: name,
             pageSize: pageSize,
@@ -56,6 +104,7 @@ const ViewWithMajor = () => {
                 },
                 code: entity?.code,
                 school: entity?.school?.vnName,
+                content: entity
             }));
             setFaculties(formattedData);
         }).catch(err => {
@@ -64,7 +113,11 @@ const ViewWithMajor = () => {
                 content: err?.message,
                 status: 'error'
             });
-        })
+        });
+    }
+
+    useEffect(() => {
+        findAllFaculty();
     }, [name, pageIndex, pageSize]);
 
     const onSearchSchool = (value) => {
@@ -100,6 +153,10 @@ const ViewWithMajor = () => {
                        columns={columns}
                        dataSource={faculties}/>
             </Flex>
+            <ModalCreateMajor isModalOpen={isModalOpen}
+                              record={record}
+                              refresh={findAllFaculty}
+                              setIsModalOpen={setIsModalOpen}/>
         </Flex>
     )
 }

@@ -22,9 +22,9 @@ const AdminViewSchool = () => {
                     Thêm mới
                 </Button>
             </Flex>
-            <ViewWithSchool/>
-            <ModalCreateSchool isModalOpen={isModalOpen}
-                               setIsModalOpen={setIsModalOpen}/>
+            <ViewWithSchool isModalOpen={isModalOpen}
+                            setIsModalOpen={setIsModalOpen}
+                            isAdmin={true}/>
         </Flex>
     )
 }

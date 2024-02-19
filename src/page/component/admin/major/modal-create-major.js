@@ -3,13 +3,12 @@ import {useEffect, useState} from "react";
 import {serviceHust} from "../../../../utils/service";
 import {showToast} from "../../../../utils/helper";
 
-const ModalCreateMajor = ({isModalOpen, setIsModalOpen}) => {
+const ModalCreateMajor = ({isModalOpen, setIsModalOpen, record, refresh}) => {
     const [form] = Form.useForm();
-    const [vnName, setVnName] = useState("");
-    const [enName, setEnName] = useState("");
-    const [abbreviations, setAbbreviations] = useState("");
+    const [name, setName] = useState("");
+    const [code, setCode] = useState("");
     const [schools, setSchools] = useState([]);
-    const [school, setSchool] = useState("");
+    const [school, setSchool] = useState({});
 
     useEffect(() => {
         serviceHust.findAllSchool().then(res => {
@@ -23,6 +22,25 @@ const ModalCreateMajor = ({isModalOpen, setIsModalOpen}) => {
 
     }, []);
 
+    useEffect(() => {
+        if (record) {
+            form.setFieldsValue({
+                name: record?.data?.content?.name
+            })
+            setName(record?.data?.content?.name);
+
+            form.setFieldsValue({
+                code: record?.data?.content?.code
+            })
+            setCode(record?.data?.content?.code);
+
+            form.setFieldsValue({
+                schoolId: record?.data?.content?.school?.id
+            })
+            setSchool(record?.data?.content?.school?.id);
+        }
+    }, [isModalOpen]);
+
     const handleCancel = () => {
         form.resetFields();
         setIsModalOpen(false);
@@ -31,6 +49,7 @@ const ModalCreateMajor = ({isModalOpen, setIsModalOpen}) => {
     const OptionSelect = ({value, options, functionChange}) => {
         return (
             <Select showSearch
+                    disabled={record?.action === 'DELETE'}
                     value={value}
                     onChange={functionChange}
                     filterOption={(input, option) =>
@@ -48,73 +67,101 @@ const ModalCreateMajor = ({isModalOpen, setIsModalOpen}) => {
     }
 
     const save = () => {
-        serviceHust.addSchool(form.getFieldValue())
-            .then(res => {
-                showToast({
-                    content: "Thêm trường/viện thành công!",
-                    status: 'success',
+        console.log(record)
+        if (record?.action === 'EDIT') {
+            serviceHust.editFaculty(form.getFieldValue(), record?.data?.content?.id)
+                .then(() => {
+                    showToast({
+                        content: "Chỉnh sửa chuyên ngành thành công!",
+                        status: 'success',
+                    });
+                    refresh();
+                })
+                .catch(err => {
+                    showToast({
+                        content: err?.message,
+                        status: 'error'
+                    });
                 });
-            })
-            .catch(err => {
-                showToast({
-                    content: err?.message,
-                    status: 'error'
+        } else if (record?.action === 'DELETE') {
+            serviceHust.deleteFaculty(form.getFieldValue(), record?.data?.content?.id)
+                .then(() => {
+                    showToast({
+                        content: "Xoá chuyên ngành thành công!",
+                        status: 'success',
+                    });
+                    refresh();
+                })
+                .catch(err => {
+                    showToast({
+                        content: err?.message,
+                        status: 'error'
+                    });
                 });
-            })
+        } else {
+            serviceHust.addFaculty(form.getFieldValue())
+                .then(() => {
+                    showToast({
+                        content: "Thêm chuyên ngành thành công!",
+                        status: 'success',
+                    });
+                    refresh();
+                })
+                .catch(err => {
+                    showToast({
+                        content: err?.message,
+                        status: 'error'
+                    });
+                });
+        }
     }
 
-    const onChangeVnName = (e) => {
+    const onChangeName = (e) => {
         const inputValue = e.target.value;
         form.setFieldsValue({
-            vnName: inputValue
+            name: inputValue
         })
-        setVnName(inputValue);
+        setName(inputValue);
     }
 
-    const onChangeEnName = (e) => {
+    const onChangeCode = (e) => {
         const inputValue = e.target.value;
         form.setFieldsValue({
-            enName: inputValue
+            code: inputValue
         })
-        setEnName(inputValue);
-    }
-
-    const onChangeAbbreviations = (e) => {
-        const inputValue = e.target.value;
-        form.setFieldsValue({
-            abbreviations: inputValue
-        })
-        setAbbreviations(inputValue);
+        setCode(inputValue);
     }
 
     const onChangeSchool = (value) => {
         form.setFieldsValue({
-            school: value
+            schoolId: value
         })
         setSchool(value);
     }
 
     return (
-        <Modal title="Thêm mới trường/viện"
-               open={isModalOpen}
-               onCancel={handleCancel}
-               width="100%"
-               destroyOnClose
-               footer={null}>
+        <Modal
+            title={(record?.action === 'EDIT' && "Chỉnh sửa chuyên ngành") || (record?.action === 'DELETE' && "Xoá chuyên ngành") || "Thêm mới chuyên ngành"}
+            open={isModalOpen}
+            onCancel={handleCancel}
+            width="100%"
+            destroyOnClose
+            footer={null}>
             <Form form={form} onFinish={save} style={{marginTop: 50}}>
                 <Form.Item label="Trường/Viện"
-                           name="school"
+                           name="schoolId"
                            rules={[{required: true, message: 'Vui lòng chọn trường cần thêm chuyên ngành'}]}>
                     <OptionSelect value={school} options={schools} functionChange={onChangeSchool}/>
                 </Form.Item>
-                <Form.Item label="Tên tiếng Việt"
-                           name="vnName"
-                           rules={[{required: true, message: 'Vui lòng nhập tên tiếng Việt'}]}>
-                    <Input value={vnName} onChange={onChangeVnName}/>
+                <Form.Item label="Tên chuyên ngành"
+                           name="name"
+                           rules={[{required: true, message: 'Vui lòng nhập tên chuyên ngành'}]}>
+                    <Input disabled={record?.action === 'DELETE'} value={name} onChange={onChangeName}/>
                 </Form.Item>
-                <Form.Item label="Tên tiếng Anh"
-                           name="enName">
-                    <Input value={enName} onChange={onChangeEnName}/>
+                <Form.Item label="Mã chuyên ngành"
+                           name="code"
+                           rules={[{required: true, message: 'Vui lòng nhập mã chuyên ngành'}]}>
+                    <Input disabled={record?.action === 'DELETE'} value={code} onChange={onChangeCode}/>
                 </Form.Item>
                 <Form.Item>
                     <Button className={"_btn_submit_score_"} type="link" htmlType="submit">

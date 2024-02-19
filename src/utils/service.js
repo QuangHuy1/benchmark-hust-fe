@@ -1,7 +1,7 @@
 import API from "./method";
 
-let url = process.env.REACT_APP_HUST_API;
-let serviceHust = {
+const url = process.env.REACT_APP_HUST_API;
+const serviceHust = {
     findAllSchool: () => {
         return API.request({
             url: "/school",
@@ -13,6 +13,22 @@ let serviceHust = {
         return API.request({
             url: "/school",
             method: "POST",
+            baseURL: url,
+            params: params
+        });
+    },
+    editSchool: (params, id) => {
+        return API.request({
+            url: "/school/" + id,
+            method: "PUT",
+            baseURL: url,
+            params: params
+        });
+    },
+    deleteSchool: (params, id) => {
+        return API.request({
+            url: "/school/" + id,
+            method: "DELETE",
             baseURL: url,
             params: params
         });
@@ -30,6 +46,30 @@ let serviceHust = {
             url: "/school/" + id,
             method: "GET",
             baseURL: url,
+        });
+    },
+    addFaculty: (params) => {
+        return API.request({
+            url: "/faculty",
+            method: "POST",
+            baseURL: url,
+            params: params
+        });
+    },
+    editFaculty: (params, id) => {
+        return API.request({
+            url: "/faculty/" + id,
+            method: "PUT",
+            baseURL: url,
+            params: params
+        });
+    },
+    deleteFaculty: (params, id) => {
+        return API.request({
+            url: "/faculty/" + id,
+            method: "DELETE",
+            baseURL: url,
+            params: params
         });
     },
     findAllGroup: (params) => {
@@ -52,6 +92,22 @@ let serviceHust = {
         return API.request({
             url: "/benchmark",
             method: "POST",
+            baseURL: url,
+            params: params
+        });
+    },
+    editBenchmark: (params, id) => {
+        return API.request({
+            url: "/benchmark/" + id,
+            method: "PUT",
+            baseURL: url,
+            params: params
+        });
+    },
+    deleteBenchmark: (params, id) => {
+        return API.request({
+            url: "/benchmark/" + id,
+            method: "DELETE",
             baseURL: url,
             params: params
         });

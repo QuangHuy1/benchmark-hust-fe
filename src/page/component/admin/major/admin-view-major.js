@@ -22,9 +22,9 @@ const AdminViewMajor = () => {
                     Thêm mới
                 </Button>
             </Flex>
-            <ViewWithMajor/>
-            <ModalCreateMajor isModalOpen={isModalOpen}
-                              setIsModalOpen={setIsModalOpen}/>
+            <ViewWithMajor isModalOpen={isModalOpen}
+                           setIsModalOpen={setIsModalOpen}
+                           isAdmin={true}/>
         </Flex>
     )
 }

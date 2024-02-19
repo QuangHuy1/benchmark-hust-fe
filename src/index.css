@@ -191,3 +191,11 @@ code {
   width: fit-content;
 }
 
+._icon_ {
+  color: darkred !important;
+}
+
+._icon_:hover {
+  color: #ff6d78 !important;
+}
+

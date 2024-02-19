@@ -1,8 +1,8 @@
 import {
     Flex,
-    FormControl, FormLabel,
+    FormControl, FormLabel, Icon,
 } from "@chakra-ui/react";
-import {Input, Select, Slider, Table, Tag} from "antd";
+import {Input, Select, Slider, Space, Table, Tag} from "antd";
 import {useEffect, useState} from "react";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {tokenState, typeState, typeTestState} from "../../recoil";
@@ -10,8 +10,10 @@ import {showToast} from "../../../utils/helper";
 import {serviceHust} from "../../../utils/service";
 import {useLocation} from "react-router-dom";
 import {GROUP_TYPES, YEARS} from "../../../utils/const";
+import {MdDelete, MdEdit} from "react-icons/md";
+import ModalCreateScore from "../admin/score/modal-create-score";
 
-const ViewWithScore = () => {
+const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
     const location = useLocation();
     const {pathname} = location;
     const arrPath = pathname.split('/');
@@ -33,6 +35,7 @@ const ViewWithScore = () => {
     const [typeTest, setTypeTest] = useRecoilState(typeTestState)
     const type = useRecoilValue(typeState);
     const token = useRecoilValue(tokenState);
+    const [record, setRecord] = useState({});
 
     useEffect(() => {
         if (typeTest === 1) {
@@ -70,6 +73,9 @@ const ViewWithScore = () => {
 
     useEffect(() => {
         if (type === 3) {
+            if (currentRoute === undefined) {
+                return;
+            }
             serviceHust.findAllFacultyBySchoolId(currentRoute).then(res => {
                 let listIds = "";
                 res?.faculties.map(data => {
@@ -83,6 +89,10 @@ const ViewWithScore = () => {
     }, [type]);
 
     useEffect(() => {
+        searchBenchmark();
+    }, [typeTest, facultyId, mark, year, group, pageIndex, pageSize]);
+
+    const searchBenchmark = () => {
         serviceHust.searchBenchmark({
             groupType: typeTest === 0 ? 'BASIC' : 'TSA',
             facultyIds: facultyId,
@@ -95,16 +105,18 @@ const ViewWithScore = () => {
         }).then(res => {
             setResponse(res);
             setData(res.content.map(((body, index) => ({
+                key: body?.id,
                 index: index + 1,
                 major: body.faculty,
                 mark: body.score,
                 group: group !== "" ? [group] : body.groups,
-                name: body.school
+                name: body?.school?.vnName,
+                content: body
             }))))
-        })
-    }, [typeTest, facultyId, mark, year, group, pageIndex, pageSize]);
+        });
+    }
 
-    const columns = [
+    const columns = isAdmin ? [
         {
             title: 'STT',
             dataIndex: 'index',
@@ -138,7 +150,7 @@ const ViewWithScore = () => {
                         let color = 'darkred';
                         return (
                             <Tag color={color} key={tag}>
-                                {tag.toUpperCase()}
+                                {tag}
                             </Tag>
                         );
                     })}
@@ -150,6 +162,76 @@ const ViewWithScore = () => {
             dataIndex: 'name',
             key: 'name',
         },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Icon className={"_icon_"} fontSize={20} cursor={"pointer"} onClick={() => {
+                        setIsModalOpen(true);
+                        setRecord({
+                            action: 'EDIT',
+                            data: record
+                        });
+                    }} as={MdEdit}/>
+                    <Icon className={"_icon_"} fontSize={20} cursor={"pointer"} onClick={() => {
+                        setIsModalOpen(true);
+                        setRecord({
+                            action: 'DELETE',
+                            data: record
+                        });
+                    }} as={MdDelete}/>
+                </Space>
+            ),
+        },
+    ] : [
+        {
+            title: 'STT',
+            dataIndex: 'index',
+            key: 'index',
+        },
+        {
+            title: 'Tên ngành',
+            dataIndex: 'major',
+            key: 'major',
+        },
+        {
+            title: 'Điểm chuẩn',
+            dataIndex: 'mark',
+            key: 'mark',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => a.mark - b.mark,
+            render: (text, record) => <Flex flexDir={"column"} justifyContent={"space-between"}>
+                <Flex>
+                    {text}
+                </Flex>
+                <Flex>
+                    [<a onClick={() => expend(record?.key)}>{record?.key === expended ? "Ẩn thống kê" : "Xem thống kê"}</a>]
+                </Flex>
+            </Flex>,
+        },
+        {
+            title: 'Khối thi',
+            dataIndex: 'group',
+            key: 'group',
+            render: (_, {group}) => (
+                <>
+                    {group.map((tag) => {
+                        let color = 'darkred';
+                        return (
+                            <Tag color={color} key={tag}>
+                                {tag.toUpperCase()}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Tên trường',
+            dataIndex: 'name',
+            key: 'name',
+        }
     ]
 
     const handleChangeGroup = (value) => {
@@ -247,6 +329,12 @@ const ViewWithScore = () => {
         )
     }
 
+    const [expended, setExpended] = useState();
+    const expend = (index) => {
+        if (expended === index) setExpended(undefined);
+        else setExpended(index);
+    };
+
     return (
         <Flex w={"100%"} flexDir={"column"}>
             <Flex mb={30} w={"100%"} justifyContent={"space-between"} alignItems={"center"}>
@@ -284,7 +372,8 @@ const ViewWithScore = () => {
                             <FormLabel>Hình thức thi</FormLabel>
                         </FormControl>
                         <Flex width='100%'>
-                            <OptionSelect value={groupType} options={groupTypes} functionChange={handleChangeGroupType}/>
+                            <OptionSelect value={groupType} options={groupTypes}
+                                          functionChange={handleChangeGroupType}/>
                         </Flex>
                     </Flex>
                 }
@@ -329,10 +418,25 @@ const ViewWithScore = () => {
                            ...pagination,
                            onChange: handleTableChange, // Gọi hàm này khi người dùng thay đổi trang
                        }}
+                       expandable={{
+                           expandedRowRender: (record) => (
+                               <p
+                                   style={{
+                                       margin: 0,
+                                   }}
+                               >
+                                   {record.description}
+                               </p>
+                           ),
+                       }}
+                       expandedRowKeys={[expended]}
                        columns={columns}
                        dataSource={data}/>
             </Flex>
-
+            <ModalCreateScore isModalOpen={isModalOpen}
+                              record={record}
+                              refresh={searchBenchmark}
+                              setIsModalOpen={setIsModalOpen}/>
         </Flex>
     )
 }
