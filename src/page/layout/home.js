@@ -30,6 +30,7 @@ const Home = () => {
             setType(2);
         } else if (window.location.pathname.startsWith("/recommend")) {
             setType(5);
+            setTypeTest(2);
         }
     }, [window.location.pathname]);
 
@@ -62,6 +63,11 @@ const Home = () => {
                         Điểm thi đánh giá tư duy
                     </div>
                 }
+                {typeTest === 2 &&
+                    <div className={"_text_title_1_"}>
+                        Gợi ý ngành học
+                    </div>
+                }
                 <Flex height={"fit-content"}
                       alignItems={"center"}
                       justifyContent={"center"}
@@ -75,33 +81,35 @@ const Home = () => {
                           justifyContent={"center"}
                           borderRadius={10}
                           w={"80%"}>
-                        <Flex w={"100%"}
-                              mb={30}
-                              alignItems={"center"}
-                              justifyContent={"space-between"}>
+                        {typeTest !== 2 &&
                             <Flex w={"100%"}
-                                  p={10}
-                                  border={"1px solid #ababab"}
+                                  mb={30}
                                   alignItems={"center"}
-                                  justifyContent={"center"}
-                                  onClick={() => changeType(0)}
-                                  className={type === 0 || type === 3 ? "_view_enable_" : "_view_disable_"}>Xem theo trường</Flex>
-                            <Flex w={"100%"}
-                                  p={10}
-                                  borderTop={"1px solid #ababab"}
-                                  borderBottom={"1px solid #ababab"}
-                                  alignItems={"center"}
-                                  justifyContent={"center"}
-                                  onClick={() => changeType(1)}
-                                  className={type === 1 || type === 4 ? "_view_enable_" : "_view_disable_"}>Xem theo ngành</Flex>
-                            <Flex w={"100%"}
-                                  p={10}
-                                  border={"1px solid #ababab"}
-                                  alignItems={"center"}
-                                  justifyContent={"center"}
-                                  onClick={() => changeType(2)}
-                                  className={type === 2 ? "_view_enable_" : "_view_disable_"}>Xem theo điểm</Flex>
-                        </Flex>
+                                  justifyContent={"space-between"}>
+                                <Flex w={"100%"}
+                                      p={10}
+                                      border={"1px solid #ababab"}
+                                      alignItems={"center"}
+                                      justifyContent={"center"}
+                                      onClick={() => changeType(0)}
+                                      className={type === 0 || type === 3 ? "_view_enable_" : "_view_disable_"}>Xem theo trường</Flex>
+                                <Flex w={"100%"}
+                                      p={10}
+                                      borderTop={"1px solid #ababab"}
+                                      borderBottom={"1px solid #ababab"}
+                                      alignItems={"center"}
+                                      justifyContent={"center"}
+                                      onClick={() => changeType(1)}
+                                      className={type === 1 || type === 4 ? "_view_enable_" : "_view_disable_"}>Xem theo ngành</Flex>
+                                <Flex w={"100%"}
+                                      p={10}
+                                      border={"1px solid #ababab"}
+                                      alignItems={"center"}
+                                      justifyContent={"center"}
+                                      onClick={() => changeType(2)}
+                                      className={type === 2 ? "_view_enable_" : "_view_disable_"}>Xem theo điểm</Flex>
+                            </Flex>
+                        }
                         {type === 0 && <ViewWithSchool/>}
                         {type === 1 && <ViewWithMajor/>}
                         {type === 2 && <ViewWithScore/>}

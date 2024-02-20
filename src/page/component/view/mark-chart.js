@@ -1,31 +1,30 @@
 import ReactApexChart from 'react-apexcharts';
 import {useEffect, useState} from "react";
 import {serviceHust} from "../../../utils/service";
+import {YEARS} from "../../../utils/const";
 
-const MarkChart = () => {
+const MarkChart = ({facultyIds, typeTest}) => {
     const [data, setData] = useState([]);
 
     const customTooltip = ({series, dataPointIndex, w}) => {
         const xDateValue = w.config.xaxis.categories[dataPointIndex];
-        const yVnIndexValue = series[1][dataPointIndex];
-        const yVnDafValue = series[0][dataPointIndex];
+        const yMarkValue = series[0][dataPointIndex];
 
         // Tạo nội dung tooltip tùy chỉnh
         return `
             <div class="_tooltip_main_">
                 <div class="_tooltip_date_">
-                    ${xDateValue}
                 </div>
                 <div class='_tooltip_value_'>
                     <div class="_tooltip_title_">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                             <rect x="2" y="2" width="8" height="8" rx="1" fill="#2939F5"/>
                         </svg>
-                        <span>VN-Index</span>
+                        <span>Điểm chuẩn</span>
                     </div>
                    
                     <div class="_tooltip_value_2_">
-                        ${yVnIndexValue}
+                        ${yMarkValue}
                     </div>
                 </div>
                 <div class='_tooltip_value_'>
@@ -33,11 +32,11 @@ const MarkChart = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                             <rect x="2" y="2" width="8" height="8" rx="1" fill="#58D764"/>
                         </svg>
-                        <span>VNDAF</span>
+                        <span>Năm</span>
                     </div>
                     
                     <div class="_tooltip_value_2_">
-                        ${yVnDafValue}
+                        ${xDateValue}
                     </div>
                 </div>
             </div>
@@ -48,35 +47,35 @@ const MarkChart = () => {
         series: [
             {
                 name: 'Điểm chuẩn',
-                data: data.map(item => item.close),
+                data: data.map(item => item.score),
             },
         ],
         options: {
             chart: {
                 height: 350,
-                type: 'area',
-                events: {
-                    beforeZoom: (e, {xaxis}) => {
-                        let maindifference = (new Date(maxDate)).valueOf() - new Date(minDate).valueOf();
-                        let zoomdifference = xaxis.max - xaxis.min;
-                        if (zoomdifference > maindifference)
-                            return {
-                                xaxis: {
-                                    min: minDate,
-                                    max: maxDate
-                                }
-                            };
-                        else {
-                            return {
-                                // keep on zooming
-                                xaxis: {
-                                    min: xaxis.min,
-                                    max: xaxis.max
-                                }
-                            }
-                        }
-                    },
-                },
+                type: 'bar',
+                // events: {
+                //     beforeZoom: (e, {xaxis}) => {
+                //         let maindifference = (new Date(maxDate)).valueOf() - new Date(minDate).valueOf();
+                //         let zoomdifference = xaxis.max - xaxis.min;
+                //         if (zoomdifference > maindifference)
+                //             return {
+                //                 xaxis: {
+                //                     min: minDate,
+                //                     max: maxDate
+                //                 }
+                //             };
+                //         else {
+                //             return {
+                //                 // keep on zooming
+                //                 xaxis: {
+                //                     min: xaxis.min,
+                //                     max: xaxis.max
+                //                 }
+                //             }
+                //         }
+                //     },
+                // },
             },
             dataLabels: {
                 enabled: false,
@@ -87,12 +86,12 @@ const MarkChart = () => {
             },
             xaxis: {
                 type: 'datetime',
-                categories: data.map(item => item.date),
-                labels: {
-                    format: 'dd/MM/yyyy'
-                },
-                min: startTime,
-                max: endTime
+                categories: YEARS.map(item => item.value),
+                // labels: {
+                //     format: 'yyyy'
+                // },
+                // min: 2017,
+                // max: 2018
             },
             tooltip: {
                 custom: customTooltip,
@@ -110,41 +109,25 @@ const MarkChart = () => {
     const [chartData, setChartData] = useState(initialData);
 
     useEffect(() => {
-        serviceHust.searchBenchmark(startTime, endTime).then(data => {
-            setData(data);
+        console.log(facultyIds)
+        if (facultyIds === undefined) return;
+        serviceHust.searchBenchmark({
+            facultyIds: facultyIds,
+            groupType: typeTest === 0 ? 'BASIC' : 'TSA',
+            years: YEARS.map(item => item.value).join(",")
+        }).then(data => {
+            setData(data?.content);
             const initialData = {
                 series: [
                     {
                         name: 'MARK',
-                        data: data.map(item => item.close),
+                        data: data?.content.map(item => item.score),
                     },
                 ],
                 options: {
                     chart: {
                         height: 350,
-                        type: 'area',
-                        events: {
-                            beforeZoom: (e, {xaxis}) => {
-                                let maindifference = (new Date(endTime)).valueOf() - new Date(startTime).valueOf();
-                                let zoomdifference = xaxis.max - xaxis.min;
-                                if (zoomdifference > maindifference)
-                                    return {
-                                        xaxis: {
-                                            min: minDate,
-                                            max: maxDate
-                                        }
-                                    };
-                                else {
-                                    return {
-                                        // keep on zooming
-                                        xaxis: {
-                                            min: xaxis.min,
-                                            max: xaxis.max
-                                        }
-                                    }
-                                }
-                            },
-                        },
+                        type: 'bar',
                     },
                     dataLabels: {
                         enabled: false,
@@ -154,13 +137,13 @@ const MarkChart = () => {
                         curve: 'smooth',
                     },
                     xaxis: {
-                        type: 'datetime',
-                        categories: data.map(item => item.date),
-                        labels: {
-                            format: 'dd/MM/yyyy'
-                        },
-                        min: startTime,
-                        max: endTime
+                        type: 'category',
+                        categories: data?.content.map(item => item?.year),
+                        // labels: {
+                        //     format: 'dd/MM/yyyy'
+                        // },
+                        // min: startTime,
+                        // max: endTime
                     },
                     tooltip: {
                         custom: customTooltip,
@@ -178,18 +161,18 @@ const MarkChart = () => {
         }).catch(e => {
             console.log(e)
         })
-    }, [startTime, endTime]);
+    }, [facultyIds, typeTest]);
 
 
     console.log(chartData)
 
 
     return (
-        <div id="chart">
+        <div style={{width: '100%'}} id="chart">
             <ReactApexChart
                 options={chartData.options}
                 series={chartData.series}
-                type="area"
+                type="bar"
                 height={350}
             />
         </div>

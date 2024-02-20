@@ -12,6 +12,7 @@ import {useLocation} from "react-router-dom";
 import {GROUP_TYPES, YEARS} from "../../../utils/const";
 import {MdDelete, MdEdit} from "react-icons/md";
 import ModalCreateScore from "../admin/score/modal-create-score";
+import MarkChart from "./mark-chart";
 
 const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
     const location = useLocation();
@@ -36,6 +37,8 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
     const type = useRecoilValue(typeState);
     const token = useRecoilValue(tokenState);
     const [record, setRecord] = useState({});
+    const [expended, setExpended] = useState();
+    const [facultyIds, setFacultyIds] = useState("");
 
     useEffect(() => {
         if (typeTest === 1) {
@@ -131,12 +134,16 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
             title: 'Điểm chuẩn',
             dataIndex: 'mark',
             key: 'mark',
-            render: (text) => <Flex flexDir={"column"} justifyContent={"space-between"}>
+            sorter: (a, b) => a.mark - b.mark,
+            render: (text, record) => <Flex flexDir={"column"} justifyContent={"space-between"}>
                 <Flex>
                     {text}
                 </Flex>
                 <Flex>
-                    [<a> Xem thống kê</a>]
+                    [<a onClick={() => {
+                    setFacultyIds(record?.content?.facultyIds);
+                    expend(record?.key);
+                }}>{record?.key === expended ? "Ẩn thống kê" : "Xem thống kê"}</a>]
                 </Flex>
             </Flex>,
         },
@@ -199,14 +206,16 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
             title: 'Điểm chuẩn',
             dataIndex: 'mark',
             key: 'mark',
-            defaultSortOrder: 'descend',
             sorter: (a, b) => a.mark - b.mark,
             render: (text, record) => <Flex flexDir={"column"} justifyContent={"space-between"}>
                 <Flex>
                     {text}
                 </Flex>
                 <Flex>
-                    [<a onClick={() => expend(record?.key)}>{record?.key === expended ? "Ẩn thống kê" : "Xem thống kê"}</a>]
+                    [<a onClick={() => {
+                    setFacultyIds(record?.content?.facultyIds);
+                    expend(record?.key);
+                }}>{record?.key === expended ? "Ẩn thống kê" : "Xem thống kê"}</a>]
                 </Flex>
             </Flex>,
         },
@@ -329,7 +338,6 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
         )
     }
 
-    const [expended, setExpended] = useState();
     const expend = (index) => {
         if (expended === index) setExpended(undefined);
         else setExpended(index);
@@ -366,7 +374,7 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
                     </Flex>
                 </Flex>
 
-                {token &&
+                {isAdmin &&
                     <Flex mr={30} w={"20%"} flexDir={"column"}>
                         <FormControl mb={10}>
                             <FormLabel>Hình thức thi</FormLabel>
@@ -420,13 +428,9 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
                        }}
                        expandable={{
                            expandedRowRender: (record) => (
-                               <p
-                                   style={{
-                                       margin: 0,
-                                   }}
-                               >
-                                   {record.description}
-                               </p>
+                               <Flex w={'100%'}>
+                                   <MarkChart typeTest={typeTest} facultyIds={facultyIds}/>
+                               </Flex>
                            ),
                        }}
                        expandedRowKeys={[expended]}

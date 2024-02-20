@@ -11,10 +11,10 @@ import {RedoOutlined} from "@ant-design/icons";
 
 const ViewWithRecommend = () => {
     const [mark, setMark] = useState(0);
-    const [group, setGroup] = useState("");
+    const [group, setGroup] = useState([]);
     const [groups, setGroups] = useState([])
     const [schools, setSchools] = useState([]);
-    const [school, setSchool] = useState(0);
+    const [school, setSchool] = useState([]);
     const [pagination, setPagination] = useState({pageSize: 10, current: 1});
     const [data, setData] = useState([]);
     const [response, setResponse] = useState({});
@@ -22,6 +22,7 @@ const ViewWithRecommend = () => {
     const [level2, setLevel2] = useState("");
     const [level3, setLevel3] = useState("");
     const [loading, setLoading] = useState(false);
+    const [loadingRecommend, setLoadingRecommend] = useState(false);
     const MARK = "Điểm chuẩn dự kiến";
     const SCHOOL = "Lĩnh vực mong muốn";
     const GROUP = "Khối thi";
@@ -46,18 +47,14 @@ const ViewWithRecommend = () => {
             pageSize: 100,
             pageIndex: 1
         }).then(res => {
-            const resultGroup = [{
-                value: "",
-                label: "Tất cả",
-            }]
-            res.map(data => {
-                resultGroup.push({
-                    value: data.code,
-                    label: data.code,
-                })
-            })
-            setGroups(resultGroup);
-            setGroup("");
+            const formattedData = res.map((entity, index) => ({
+                value: entity.code,
+                label: entity.code,
+                index: index + 1,
+                name: entity?.code,
+                id: entity?.code
+            }));
+            setGroups(formattedData);
         })
     }, []);
 
@@ -68,12 +65,7 @@ const ViewWithRecommend = () => {
                 name: entity?.vnName,
                 id: entity?.id
             }));
-            formattedData.push({
-                index: 0,
-                name: "Tất cả",
-                id: 0
-            })
-            setSchools(formattedData)
+            setSchools(formattedData);
         })
     }, []);
 
@@ -207,14 +199,12 @@ const ViewWithRecommend = () => {
 
     const handleChangeSchool = (value) => {
         setPagination({pageSize: 10, current: 1});
-        console.log(value);
         setSchool(value);
     }
 
     const handleChangeLevel1 = (value) => {
         setPagination({pageSize: 10, current: 1});
         setLevel1(value);
-        console.log(value);
         const updatedOptions = options.filter(option => option.value !== value);
         // Gán lại mảng đã lọc cho biến options
         setOptions(updatedOptions);
@@ -240,6 +230,7 @@ const ViewWithRecommend = () => {
         return (
             <Select style={{width: '100%'}} showSearch
                     value={value}
+                    mode="multiple"
                     onChange={functionChange}
                     filterOption={(input, option) =>
                         (option?.label ?? '').toLocaleLowerCase('vi').includes(input.toLocaleLowerCase('vi'))}
@@ -253,6 +244,99 @@ const ViewWithRecommend = () => {
             >
             </Select>
         )
+    }
+
+    const recommend = () => {
+        if (level1 === "" || level2 === "" || level3 === "") {
+            showToast({
+                content: 'Vui lòng nhập đẩy đủ mức độ ưu tiên',
+                status: 'warning'
+            });
+            return;
+        }
+        if (mark <= 0) {
+            showToast({
+                content: 'Vui lòng nhập điểm chuẩn lớn hơn 0',
+                status: 'warning'
+            });
+            return;
+        }
+        if (school.length === 0) {
+            showToast({
+                content: 'Vui lòng chọn lĩnh vực mong muốn',
+                status: 'warning'
+            });
+            return;
+        }
+        if (group.length === 0) {
+            showToast({
+                content: 'Vui lòng chọn khối thi mong muốn',
+                status: 'warning'
+            });
+            return;
+        }
+        const lv1 = (level1 === MARK && {
+            "fieldName": "avgBenchmark",
+            "avgBenchmark": mark,
+            "priorityPoint": 3
+        }) || (level1 === GROUP && {
+            "fieldName": "groupCode",
+            "groupCode": group,
+            "priorityPoint": 3
+        }) || (level1 === SCHOOL && {
+            "fieldName": "schoolId",
+            "schoolId": school,
+            "priorityPoint": 3
+        });
+
+        const lv2 = (level2 === MARK && {
+            "fieldName": "avgBenchmark",
+            "avgBenchmark": mark,
+            "priorityPoint": 2
+        }) || (level2 === GROUP && {
+            "fieldName": "groupCode",
+            "groupCode": group,
+            "priorityPoint": 2
+        }) || (level2 === SCHOOL && {
+            "fieldName": "schoolId",
+            "schoolId": school,
+            "priorityPoint": 2
+        });
+
+        const lv3 = (level3 === MARK && {
+            "fieldName": "avgBenchmark",
+            "avgBenchmark": mark,
+            "priorityPoint": 1
+        }) || (level3 === GROUP && {
+            "fieldName": "groupCode",
+            "groupCode": group,
+            "priorityPoint": 1
+        }) || (level3 === SCHOOL && {
+            "fieldName": "schoolId",
+            "schoolId": school,
+            "priorityPoint": 1
+        });
+
+        const params = [
+            lv1, lv2, lv3
+        ]
+        serviceHust.suggest(params).then(res => {
+            setResponse(res);
+            setData(res.map(((body, index) => ({
+                index: index + 1,
+                major: body?.facultyName,
+                mark: body?.avgBenchmark,
+                group: body?.groupCode,
+                name: body?.schoolName,
+                content: body
+            }))))
+        }).catch(err => {
+            console.log(err);
+            showToast({
+                content: err?.message,
+                status: 'error'
+            });
+        })
     }
 
     return (
@@ -291,19 +375,12 @@ const ViewWithRecommend = () => {
                         <FormLabel>Khối thi</FormLabel>
                     </FormControl>
                     <Flex width='100%'>
-                        <Select
-                            value={group}
-                            style={{
-                                width: '100%',
-                            }}
-                            onChange={handleChangeGroup}
-                            options={groups}
-                        />
+                        <OptionSelect value={group} options={groups} functionChange={handleChangeGroup}/>
                     </Flex>
                 </Flex>
             </Flex>
 
-            <Flex w="100%" flexDir={"column"}>
+            <Flex mb={30} w="100%" flexDir={"column"}>
                 <FormControl>
                     <FormLabel>
                         <Flex alignItems={"center"}>
@@ -342,6 +419,11 @@ const ViewWithRecommend = () => {
                                 onChange={handleChangeLevel3}/>
                     </Flex>
                 </Flex>
+            </Flex>
+
+            <Flex mb={30} w={'100%'} justifyContent={"center"} alignItems={"center"}>
+                <Button onClick={recommend} loading={loadingRecommend} style={{width: '30%', fontWeight: 1000}}>BẮT ĐẦU
+                    GỢI Ý</Button>
             </Flex>
 
             <Flex w={"100%"}>

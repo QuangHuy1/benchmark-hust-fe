@@ -127,6 +127,14 @@ const serviceHust = {
             baseURL: url,
         });
     },
+    suggest: (params) => {
+        return API.request({
+            url: `/faculty/suggest`,
+            method: "POST",
+            baseURL: url,
+            params: params,
+        });
+    },
     changePassword: (params) => {
         return API.request({
             url: `/api/auth/change-password`,

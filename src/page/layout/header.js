@@ -40,7 +40,7 @@ const Header = () => {
                 </Flex>
 
                 {/*Menu*/}
-                <Flex w={'40%'}
+                <Flex w={'80%'}
                       justifyContent={"center"}
                       alignItems={"center"}>
                     <Icon fontSize={26} cursor={"pointer"} color={"darkred"} as={IoMdHome}/>
@@ -53,6 +53,11 @@ const Header = () => {
                           onClick={() => window.location.href = "/danh-gia-tu-duy"}
                     >
                         Điểm thi đánh giá tư duy
+                    </Flex>
+                    <Flex className={typeTest === 2 ? "_menu_text_enable" : "_menu_text_"}
+                          onClick={() => window.location.href = "/recommend"}
+                    >
+                        Gợi ý ngành học
                     </Flex>
                 </Flex>
 
