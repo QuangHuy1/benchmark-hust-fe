@@ -42,8 +42,8 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
 
     useEffect(() => {
         if (typeTest === 1) {
-            setMark([0, 40]);
-            setMax(40)
+            setMark([0, 60]);
+            setMax(60)
         } else {
             setMark([0, 30]);
             setMax(30)

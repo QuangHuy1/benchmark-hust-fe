@@ -12,6 +12,12 @@ export const MAIN_PADDING_X = {
 
 export const YEARS = [
     {
+        value: "2025",
+        label: "2025",
+        id: "2025",
+        name: "2025",
+    },
+    {
         value: "2024",
         label: "2024",
         id: "2024",
@@ -41,24 +47,6 @@ export const YEARS = [
         id: "2020",
         name: "2020",
     },
-    {
-        value: "2019",
-        label: "2019",
-        id: "2019",
-        name: "2019",
-    },
-    {
-        value: "2018",
-        label: "2018",
-        id: "2018",
-        name: "2018",
-    },
-    {
-        value: "2017",
-        label: "2017",
-        id: "2017",
-        name: "2017",
-    }
 ]
 
 export const GROUP_TYPES = [
