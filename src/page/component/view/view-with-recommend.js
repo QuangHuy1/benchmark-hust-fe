@@ -94,40 +94,6 @@ const ViewWithRecommend = () => {
         }, 1000);
     }
 
-    useEffect(() => {
-        setData([
-            {
-                index: 1,
-                major: "Hóa Học",
-                mark: 25.00,
-                group: ["A00", "B00", "D07"],
-                name: "Trường Hóa và Khoa học sự sống"
-            },
-            {
-                index: 2,
-                major: "Kỹ Thuật Hóa Học",
-                mark: 25.02,
-                group: ["A00", "B00", "D07"],
-                name: "Trường Hóa và Khoa học sự sống"
-            },
-            {
-                index: 3,
-                major: "Kỹ Thuật Sinh Học",
-                mark: 24.96,
-                group: ["A00", "B00"],
-                name: "Trường Hóa và Khoa học sự sống"
-            },
-            {
-                index: 3,
-                major: "Kỹ Thuật Thực phẩm",
-                mark: 24.98,
-                group: ["A00", "B00"],
-                name: "Trường Hóa và Khoa học sự sống"
-            },
-
-        ])
-    }, []);
-
     const columns = [
         {
             title: 'STT',
