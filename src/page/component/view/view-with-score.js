@@ -84,6 +84,26 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
                 res?.faculties.map(data => {
                     listIds = data.id + "," + listIds
                 })
+                searchBenchmark(listIds);
+            })
+        } else if (type === 4) {
+            searchBenchmark(currentRoute);
+        } else {
+            searchBenchmark();
+        }
+    }, [type, typeTest, facultyId, mark, year, group, pageIndex, pageSize]);
+
+    useEffect(() => {
+        console.log(facultyId)
+        if (type === 3) {
+            if (currentRoute === undefined) {
+                return;
+            }
+            serviceHust.findAllFacultyBySchoolId(currentRoute).then(res => {
+                let listIds = "";
+                res?.faculties.map(data => {
+                    listIds = data.id + "," + listIds
+                })
                 setFacultyId(listIds);
             })
         } else if (type === 4) {
@@ -91,11 +111,7 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
         }
     }, [type]);
 
-    useEffect(() => {
-        searchBenchmark();
-    }, [typeTest, facultyId, mark, year, group, pageIndex, pageSize]);
-
-    const searchBenchmark = () => {
+    const searchBenchmark = (facultyId) => {
         serviceHust.searchBenchmark({
             groupType: typeTest === 0 ? 'BASIC' : 'TSA',
             facultyIds: facultyId,
