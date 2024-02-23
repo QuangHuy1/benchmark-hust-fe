@@ -107,7 +107,11 @@ const ModalCreateSchool = ({isModalOpen, setIsModalOpen, record, refresh}) => {
     }
 
     return (
-        <Modal title="Thêm mới trường/viện"
+        <Modal title={
+                   record?.action === 'DELETE' && "Xoá trường/viện"
+                   || record?.action === 'EDIT' && "Chỉnh sửa trường/viện"
+                   || "Thêm mới trường/viện"
+               }
                open={isModalOpen}
                onCancel={handleCancel}
                width="100%"

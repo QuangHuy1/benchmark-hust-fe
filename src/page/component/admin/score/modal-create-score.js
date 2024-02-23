@@ -100,7 +100,7 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen, record, refresh}) => {
         return (
             <Select showSearch
                     value={value}
-                    disabled={record?.action === 'DELETE'}
+                    disabled={record?.action === 'DELETE' || record?.action === 'EDIT'}
                     onChange={functionChange}
                     filterOption={(input, option) =>
                         (option?.label ?? '').toLocaleLowerCase('vi').includes(input.toLocaleLowerCase('vi'))}
@@ -273,7 +273,11 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen, record, refresh}) => {
     }
 
     return (
-        <Modal title="Thêm điểm chuẩn"
+        <Modal title={
+            record?.action === 'DELETE' && "Xoá điểm chuẩn"
+            || record?.action === 'EDIT' && "Chỉnh sửa điểm chuẩn"
+            || "Thêm điểm chuẩn"
+        }
                open={isModalOpen}
                onCancel={handleCancel}
                width="100%"

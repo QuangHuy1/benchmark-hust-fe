@@ -54,11 +54,11 @@ const ViewWithRecommend = () => {
             groupType: 'BASIC'
         }).then(res => {
             const formattedData = res.map((entity, index) => ({
-                value: entity.code,
+                value: entity.id,
                 label: entity.code,
                 index: index + 1,
                 name: entity?.code,
-                id: entity?.code
+                id: entity?.id
             }));
             setGroups(formattedData);
         })
