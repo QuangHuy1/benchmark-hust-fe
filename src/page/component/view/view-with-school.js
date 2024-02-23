@@ -110,14 +110,17 @@ const ViewWithSchool = ({isModalOpen, setIsModalOpen, isAdmin}) => {
 
     return (
         <Flex w={"100%"} flexDir={"column"} justifyContent={"center"} alignItems={"center"}>
-            <Search
-                rootClassName={"_search_button_"}
-                placeholder="Nhập tên trường"
-                enterButton="Tìm kiếm"
-                size="large" loading={loading}
-                onSearch={onSearchSchool}/>
+            {/*<Search*/}
+            {/*    rootClassName={"_search_button_"}*/}
+            {/*    placeholder="Nhập tên trường"*/}
+            {/*    enterButton="Tìm kiếm"*/}
+            {/*    size="large" loading={loading}*/}
+            {/*    onSearch={onSearchSchool}/>*/}
             <Flex w={"100%"} mt={30}>
-                <Table className={"_table_school_"} columns={columns} dataSource={data}/>
+                <Table pagination={{
+                    ...{pageSize: 20, current: 1},
+                }}
+                       className={"_table_school_"} columns={columns} dataSource={data}/>
             </Flex>
             <ModalCreateSchool isModalOpen={isModalOpen}
                                record={record}
