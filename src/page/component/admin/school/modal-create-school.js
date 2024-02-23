@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {serviceHust} from "../../../../utils/service";
 import {showToast} from "../../../../utils/helper";
 
-const ModalCreateSchool = ({isModalOpen, setIsModalOpen, record, refresh}) => {
+const ModalCreateSchool = ({isModalOpen, setIsModalOpen, record, refresh, setRecord}) => {
     const [form] = Form.useForm();
     const [vnName, setVnName] = useState("");
     const [enName, setEnName] = useState("");
@@ -30,6 +30,7 @@ const ModalCreateSchool = ({isModalOpen, setIsModalOpen, record, refresh}) => {
 
     const handleCancel = () => {
         form.resetFields();
+        setRecord({});
         setIsModalOpen(false);
     };
 
@@ -108,10 +109,10 @@ const ModalCreateSchool = ({isModalOpen, setIsModalOpen, record, refresh}) => {
 
     return (
         <Modal title={
-                   record?.action === 'DELETE' && "Xoá trường/viện"
-                   || record?.action === 'EDIT' && "Chỉnh sửa trường/viện"
-                   || "Thêm mới trường/viện"
-               }
+            record?.action === 'DELETE' && "Xoá trường/viện"
+            || record?.action === 'EDIT' && "Chỉnh sửa trường/viện"
+            || "Thêm mới trường/viện"
+        }
                open={isModalOpen}
                onCancel={handleCancel}
                width="100%"

@@ -4,7 +4,7 @@ import {serviceHust} from "../../../../utils/service";
 import {GROUP_TYPES, YEARS} from "../../../../utils/const";
 import {showToast} from "../../../../utils/helper";
 
-const ModalCreateScore = ({isModalOpen, setIsModalOpen, record, refresh}) => {
+const ModalCreateScore = ({isModalOpen, setIsModalOpen, record, refresh, setRecord}) => {
     const [form] = Form.useForm();
     const [schools, setSchools] = useState([]);
     const [school, setSchool] = useState("");
@@ -141,6 +141,7 @@ const ModalCreateScore = ({isModalOpen, setIsModalOpen, record, refresh}) => {
     const handleCancel = () => {
         form.resetFields();
         setGroupId([]);
+        setRecord({});
         setIsModalOpen(false);
     };
 

@@ -124,6 +124,7 @@ const ViewWithSchool = ({isModalOpen, setIsModalOpen, isAdmin}) => {
             </Flex>
             <ModalCreateSchool isModalOpen={isModalOpen}
                                record={record}
+                               setRecord={setRecord}
                                refresh={findAllSchool}
                                setIsModalOpen={setIsModalOpen}/>
         </Flex>

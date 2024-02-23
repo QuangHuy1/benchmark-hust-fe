@@ -455,6 +455,7 @@ const ViewWithScore = ({isModalOpen, setIsModalOpen, isAdmin}) => {
             </Flex>
             <ModalCreateScore isModalOpen={isModalOpen}
                               record={record}
+                              setRecord={setRecord}
                               refresh={searchBenchmark}
                               setIsModalOpen={setIsModalOpen}/>
         </Flex>

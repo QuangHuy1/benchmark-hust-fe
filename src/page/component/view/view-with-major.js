@@ -155,6 +155,7 @@ const ViewWithMajor = ({isModalOpen, setIsModalOpen, isAdmin}) => {
             </Flex>
             <ModalCreateMajor isModalOpen={isModalOpen}
                               record={record}
+                              setRecord={setRecord}
                               refresh={findAllFaculty}
                               setIsModalOpen={setIsModalOpen}/>
         </Flex>

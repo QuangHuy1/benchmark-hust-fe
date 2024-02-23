@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {serviceHust} from "../../../../utils/service";
 import {showToast} from "../../../../utils/helper";
 
-const ModalCreateMajor = ({isModalOpen, setIsModalOpen, record, refresh}) => {
+const ModalCreateMajor = ({isModalOpen, setIsModalOpen, record, refresh, setRecord}) => {
     const [form] = Form.useForm();
     const [name, setName] = useState("");
     const [code, setCode] = useState("");
@@ -43,6 +43,7 @@ const ModalCreateMajor = ({isModalOpen, setIsModalOpen, record, refresh}) => {
 
     const handleCancel = () => {
         form.resetFields();
+        setRecord({});
         setIsModalOpen(false);
     };
 
