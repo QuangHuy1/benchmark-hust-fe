@@ -127,23 +127,23 @@ const ViewWithRecommend = () => {
                 </Flex>
             </Flex>,
         },
-        // {
-        //     title: 'Khối thi',
-        //     dataIndex: 'group',
-        //     key: 'group',
-        //     render: (_, {group}) => (
-        //         <>
-        //             {group ? group.map((tag) => {
-        //                 let color = 'darkred';
-        //                 return (
-        //                     <Tag color={color} key={tag}>
-        //                         {tag.toUpperCase()}
-        //                     </Tag>
-        //                 );
-        //             }) : <Flex></Flex>}
-        //         </>
-        //     ),
-        // },
+        {
+            title: 'Khối thi',
+            dataIndex: 'group',
+            key: 'group',
+            render: (_, {group}) => (
+                <>
+                    {group ? group.map((tag) => {
+                        let color = 'darkred';
+                        return (
+                            <Tag color={color} key={tag}>
+                                {tag.toUpperCase()}
+                            </Tag>
+                        );
+                    }) : <Flex></Flex>}
+                </>
+            ),
+        },
         {
             title: 'Tên trường',
             dataIndex: 'name',
@@ -260,8 +260,8 @@ const ViewWithRecommend = () => {
             "avgBenchmark": mark,
             "priorityPoint": 3
         }) || (level1 === GROUP && {
-            "fieldName": "groupCodes",
-            "groupCodes": group,
+            "fieldName": "groupIds",
+            "groupIds": group,
             "priorityPoint": 3
         }) || (level1 === SCHOOL && {
             "fieldName": "schoolIds",
@@ -274,8 +274,8 @@ const ViewWithRecommend = () => {
             "avgBenchmark": mark,
             "priorityPoint": 2
         }) || (level2 === GROUP && {
-            "fieldName": "groupCodes",
-            "groupCodes": group,
+            "fieldName": "groupIds",
+            "groupIds": group,
             "priorityPoint": 2
         }) || (level2 === SCHOOL && {
             "fieldName": "schoolIds",
@@ -288,8 +288,8 @@ const ViewWithRecommend = () => {
             "avgBenchmark": mark,
             "priorityPoint": 1
         }) || (level3 === GROUP && {
-            "fieldName": "groupCodes",
-            "groupCodes": group,
+            "fieldName": "groupIds",
+            "groupIds": group,
             "priorityPoint": 1
         }) || (level3 === SCHOOL && {
             "fieldName": "schoolIds",
@@ -306,7 +306,7 @@ const ViewWithRecommend = () => {
                 index: index + 1,
                 major: body?.facultyName,
                 mark: body?.avgBenchmark,
-                group: body?.groupCode,
+                group: body?.groupCodes,
                 name: body?.schoolName,
                 content: body,
                 key: body?.facultyId
