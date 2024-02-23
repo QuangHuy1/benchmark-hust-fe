@@ -8,6 +8,9 @@ import {showToast} from "../../../utils/helper";
 import {serviceHust} from "../../../utils/service";
 import {FaArrowRightLong} from "react-icons/fa6";
 import {RedoOutlined} from "@ant-design/icons";
+import MarkChart from "./mark-chart";
+import {useRecoilState} from "recoil";
+import {typeTestState} from "../../recoil";
 
 const ViewWithRecommend = () => {
     const [mark, setMark] = useState(0);
@@ -23,6 +26,8 @@ const ViewWithRecommend = () => {
     const [level3, setLevel3] = useState("");
     const [loading, setLoading] = useState(false);
     const [loadingRecommend, setLoadingRecommend] = useState(false);
+    const [facultyIds, setFacultyIds] = useState("");
+    const [expended, setExpended] = useState();
     const MARK = "Điểm chuẩn dự kiến";
     const SCHOOL = "Lĩnh vực mong muốn";
     const GROUP = "Khối thi";
@@ -45,7 +50,8 @@ const ViewWithRecommend = () => {
     useEffect(() => {
         serviceHust.findAllGroup({
             pageSize: 100,
-            pageIndex: 1
+            pageIndex: 1,
+            groupType: 'BASIC'
         }).then(res => {
             const formattedData = res.map((entity, index) => ({
                 value: entity.code,
@@ -109,32 +115,35 @@ const ViewWithRecommend = () => {
             title: 'Điểm chuẩn trung bình 3 năm gần nhất',
             dataIndex: 'mark',
             key: 'mark',
-            render: (text) => <Flex flexDir={"column"} justifyContent={"space-between"}>
-                <Flex>
+            render: (text, record) => <Flex flexDir={"column"} justifyContent={"space-between"}>
+            <Flex>
                     {text}
                 </Flex>
                 <Flex>
-                    [<a> Xem thống kê</a>]
+                    [<a onClick={() => {
+                    setFacultyIds(record?.content?.facultyId);
+                    expend(record?.key);
+                }}>{record?.key === expended ? "Ẩn thống kê" : "Xem thống kê"}</a>]
                 </Flex>
             </Flex>,
         },
-        {
-            title: 'Khối thi',
-            dataIndex: 'group',
-            key: 'group',
-            render: (_, {group}) => (
-                <>
-                    {group.map((tag) => {
-                        let color = 'darkred';
-                        return (
-                            <Tag color={color} key={tag}>
-                                {tag.toUpperCase()}
-                            </Tag>
-                        );
-                    })}
-                </>
-            ),
-        },
+        // {
+        //     title: 'Khối thi',
+        //     dataIndex: 'group',
+        //     key: 'group',
+        //     render: (_, {group}) => (
+        //         <>
+        //             {group ? group.map((tag) => {
+        //                 let color = 'darkred';
+        //                 return (
+        //                     <Tag color={color} key={tag}>
+        //                         {tag.toUpperCase()}
+        //                     </Tag>
+        //                 );
+        //             }) : <Flex></Flex>}
+        //         </>
+        //     ),
+        // },
         {
             title: 'Tên trường',
             dataIndex: 'name',
@@ -157,6 +166,11 @@ const ViewWithRecommend = () => {
             return;
         }
         setMark(e.target.value);
+    };
+
+    const expend = (index) => {
+        if (expended === index) setExpended(undefined);
+        else setExpended(index);
     };
 
     const handleTableChange = (pagination) => {
@@ -246,12 +260,12 @@ const ViewWithRecommend = () => {
             "avgBenchmark": mark,
             "priorityPoint": 3
         }) || (level1 === GROUP && {
-            "fieldName": "groupCode",
-            "groupCode": group,
+            "fieldName": "groupCodes",
+            "groupCodes": group,
             "priorityPoint": 3
         }) || (level1 === SCHOOL && {
-            "fieldName": "schoolId",
-            "schoolId": school,
+            "fieldName": "schoolIds",
+            "schoolIds": school,
             "priorityPoint": 3
         });
 
@@ -260,12 +274,12 @@ const ViewWithRecommend = () => {
             "avgBenchmark": mark,
             "priorityPoint": 2
         }) || (level2 === GROUP && {
-            "fieldName": "groupCode",
-            "groupCode": group,
+            "fieldName": "groupCodes",
+            "groupCodes": group,
             "priorityPoint": 2
         }) || (level2 === SCHOOL && {
-            "fieldName": "schoolId",
-            "schoolId": school,
+            "fieldName": "schoolIds",
+            "schoolIds": school,
             "priorityPoint": 2
         });
 
@@ -274,12 +288,12 @@ const ViewWithRecommend = () => {
             "avgBenchmark": mark,
             "priorityPoint": 1
         }) || (level3 === GROUP && {
-            "fieldName": "groupCode",
-            "groupCode": group,
+            "fieldName": "groupCodes",
+            "groupCodes": group,
             "priorityPoint": 1
         }) || (level3 === SCHOOL && {
-            "fieldName": "schoolId",
-            "schoolId": school,
+            "fieldName": "schoolIds",
+            "schoolIds": school,
             "priorityPoint": 1
         });
 
@@ -294,7 +308,8 @@ const ViewWithRecommend = () => {
                 mark: body?.avgBenchmark,
                 group: body?.groupCode,
                 name: body?.schoolName,
-                content: body
+                content: body,
+                key: body?.facultyId
             }))))
         }).catch(err => {
             console.log(err);
@@ -399,6 +414,14 @@ const ViewWithRecommend = () => {
                            ...pagination,
                            onChange: handleTableChange, // Gọi hàm này khi người dùng thay đổi trang
                        }}
+                       expandable={{
+                           expandedRowRender: (record) => (
+                               <Flex w={'100%'}>
+                                   <MarkChart typeTest={0} number={3} facultyIds={facultyIds}/>
+                               </Flex>
+                           ),
+                       }}
+                       expandedRowKeys={[expended]}
                        columns={columns}
                        dataSource={data}/>
             </Flex>

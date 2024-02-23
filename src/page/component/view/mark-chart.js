@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {serviceHust} from "../../../utils/service";
 import {YEARS} from "../../../utils/const";
 
-const MarkChart = ({facultyIds, typeTest}) => {
+const MarkChart = ({facultyIds, typeTest, number}) => {
     const [data, setData] = useState([]);
 
     const customTooltip = ({series, dataPointIndex, w}) => {
@@ -109,19 +109,22 @@ const MarkChart = ({facultyIds, typeTest}) => {
     const [chartData, setChartData] = useState(initialData);
 
     useEffect(() => {
-        console.log(facultyIds)
         if (facultyIds === undefined) return;
         serviceHust.searchBenchmark({
             facultyIds: facultyIds,
             groupType: typeTest === 0 ? 'BASIC' : 'TSA',
             years: YEARS.map(item => item.value).join(",")
         }).then(data => {
-            setData(data?.content);
+            let content = data?.content;
+            if (number) {
+                content = data?.content.splice(0, number);
+            }
+            setData(content);
             const initialData = {
                 series: [
                     {
                         name: 'MARK',
-                        data: data?.content.map(item => item.score),
+                        data: content.map(item => item.score),
                     },
                 ],
                 options: {
@@ -138,7 +141,7 @@ const MarkChart = ({facultyIds, typeTest}) => {
                     },
                     xaxis: {
                         type: 'category',
-                        categories: data?.content.map(item => item?.year),
+                        categories: content.map(item => item?.year),
                         // labels: {
                         //     format: 'dd/MM/yyyy'
                         // },
@@ -162,10 +165,6 @@ const MarkChart = ({facultyIds, typeTest}) => {
             console.log(e)
         })
     }, [facultyIds, typeTest]);
-
-
-    console.log(chartData)
-
 
     return (
         <div style={{width: '100%'}} id="chart">
